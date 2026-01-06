@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom theme variables */
+:root {
+  --brand: #00247d;
+}
+
+/* Base layout */
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Small helpers */
+a {
+  @apply font-medium text-indigo-600 hover:text-indigo-500;
+}
+
+button {
+  @apply rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-gray-900 text-white hover:border-indigo-400 focus:outline-none;
+}
+
+/* Light/dark support */
+@media (prefers-color-scheme: light) {
+  :root {
+    --brand: #00247d;
+  }
+}

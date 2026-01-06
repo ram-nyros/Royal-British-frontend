@@ -1,0 +1,7 @@
+/* App styles are now handled via Tailwind utilities. Keep this file if you need ad-hoc CSS. */
+
+.logo {
+  height: 6em;
+}
+
+/* Add custom classes here if needed */
