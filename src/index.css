@@ -13,9 +13,9 @@ body {
 }
 
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 1rem;
+  /* padding: 1rem; */
 }
 
 /* Small helpers */
@@ -32,4 +32,43 @@ button {
   :root {
     --brand: #00247d;
   }
+}
+
+/* Page-specific animations used on the Home page */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 1s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+  animation-fill-mode: both;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+  animation-fill-mode: both;
 }
