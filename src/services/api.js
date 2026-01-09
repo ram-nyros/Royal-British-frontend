@@ -29,8 +29,13 @@ async function handleResponse(response) {
   return response.text();
 }
 
+let authToken = localStorage.getItem("auth_token") || null;
+function getAuthHeaders() {
+  return authToken ? { Authorization: `Bearer ${authToken}` } : {};
+}
+
 const api = {
-  get: (path, opts) =>
+  get: (path, opts = {}) =>
     fetch(buildUrl(path), { method: "GET", ...opts }).then(handleResponse),
   post: (path, body, opts = {}) =>
     fetch(buildUrl(path), {
@@ -48,6 +53,27 @@ const api = {
     }).then(handleResponse),
   delete: (path, opts = {}) =>
     fetch(buildUrl(path), { method: "DELETE", ...opts }).then(handleResponse),
+  // token helpers
+  setToken(token) {
+    authToken = token;
+    if (token) localStorage.setItem("auth_token", token);
+    else localStorage.removeItem("auth_token");
+  },
+  getAuthHeaders,
+  auth: {
+    register: async (body) => {
+      const data = await api.post("/api/auth/register", body);
+      if (data.token) api.setToken(data.token);
+      return data;
+    },
+    login: async (body) => {
+      const data = await api.post("/api/auth/login", body);
+      if (data.token) api.setToken(data.token);
+      return data;
+    },
+    me: () => api.get("/api/auth/me", { headers: getAuthHeaders() }),
+    logout: () => api.setToken(null),
+  },
 };
 
 export default api;
