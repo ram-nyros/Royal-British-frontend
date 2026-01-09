@@ -1,10 +1,15 @@
 // Lightweight fetch-based API client
 // Usage: import api from "../services/api"; await api.post('/applications', data);
 
-const BASE_URL = import.meta.env.VITE_API_URL || "";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 function buildUrl(path) {
-  return path.startsWith("http") ? path : `${BASE_URL}${path}`;
+  // If an absolute URL is provided, use it directly
+  if (path.startsWith("http")) return path;
+  // Join base and path safely to avoid duplicate slashes
+  const base = BASE_URL.replace(/\/$/, "");
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${p}`;
 }
 
 async function handleResponse(response) {
