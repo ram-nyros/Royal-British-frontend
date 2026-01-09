@@ -15,6 +15,15 @@ const Navbar = () => {
           <Link to="/apply" className="hover:underline">
             Apply
           </Link>
+          <Link to="/signin" className="hover:underline">
+            Sign In
+          </Link>
+          <Link
+            to="/signup"
+            className="ml-2 inline-block bg-red-600 text-white px-3 py-1 rounded-lg font-semibold hover:bg-red-700"
+          >
+            Sign Up
+          </Link>
         </div>
       </div>
     </nav>
