@@ -1,20 +1,28 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { setUser, user } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  React.useEffect(() => {
+    if (user) navigate("/profile");
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     try {
       await api.auth.register({ name, email, password });
-      navigate("/");
+      const me = await api.auth.me();
+      setUser(me);
+      navigate("/profile");
     } catch (err) {
       setError(err.data?.message || err.message);
     }
@@ -57,9 +65,9 @@ const SignUp = () => {
 
         <div className="mt-4 text-sm text-center">
           Already have an account?{" "}
-          <a href="/signin" className="text-blue-900 font-semibold">
+          <Link to="/signin" className="text-blue-900 font-semibold">
             Sign in
-          </a>
+          </Link>
         </div>
       </div>
     </div>

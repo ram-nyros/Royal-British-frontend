@@ -19,12 +19,200 @@ import {
   FaStar as Star,
 } from "react-icons/fa";
 
-import logo from "../assets/logo.png";
+import logo from "../assets/home-screen.png";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
+export const SiteNavbar = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
+  return (
+    <nav
+      className={`fixed w-full z-50 transition-all duration-300 ${
+        scrolled ? "bg-white shadow-lg" : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          <div className="flex items-center space-x-3">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
+              <img
+                src={logo}
+                alt="Royal British"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <h1
+                className={`text-xl font-bold ${
+                  scrolled ? "text-blue-900" : "text-white"
+                }`}
+              >
+                Royal <span className="text-red-600">British</span>
+              </h1>
+              <p
+                className={`text-xs ${
+                  scrolled ? "text-gray-600" : "text-gray-200"
+                }`}
+              >
+                International School
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center space-x-8">
+            {["Home", "Courses", "About", "Facilities", "Contact"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  to={`/#${item.toLowerCase()}`}
+                  className={`${
+                    scrolled
+                      ? "text-gray-700 hover:text-blue-600"
+                      : "text-white hover:text-gray-200"
+                  } font-medium transition-colors`}
+                >
+                  {item}
+                </Link>
+              )
+            )}
+
+            {user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className={`${
+                    scrolled ? "text-gray-700" : "text-white"
+                  } font-medium hover:underline`}
+                >
+                  {user.name || "Profile"}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="ml-2 inline-block bg-gray-800 text-white px-3 py-1 rounded-lg font-semibold hover:bg-gray-900"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className={`${
+                    scrolled ? "text-gray-700" : "text-white"
+                  } font-medium hover:underline`}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="ml-2 bg-red-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-700"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className={`md:hidden ${scrolled ? "text-gray-700" : "text-white"}`}
+          >
+            {isMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white shadow-lg">
+          <div className="px-4 pt-2 pb-4 space-y-2">
+            {["Home", "Courses", "About", "Facilities", "Contact"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  to={`/#${item.toLowerCase()}`}
+                  className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              )
+            )}
+
+            {user ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {user.name || "Profile"}
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 text-gray-700 rounded-lg hover:bg-blue-50"
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/signup"
+                  className="block px-3 py-2 text-white bg-red-600 rounded-lg text-center font-semibold"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+};
 
 const RoyalBritishBakery = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,6 +221,19 @@ const RoyalBritishBakery = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Scroll to anchor section when route hash changes (e.g. /#courses)
+  const location = useLocation();
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        // small timeout to ensure element is rendered
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 0);
+      }
+    }
+  }, [location]);
 
   const courses = [
     {
@@ -121,123 +322,9 @@ const RoyalBritishBakery = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav
-        className={`fixed w-full z-50 transition-all duration-300 ${
-          scrolled ? "bg-white shadow-lg" : "bg-transparent"
-        }`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex items-center space-x-3">
-              <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
-                <img
-                  src={logo}
-                  alt="Royal British"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <h1
-                  className={`text-xl font-bold ${
-                    scrolled ? "text-blue-900" : "text-white"
-                  }`}
-                >
-                  Royal <span className="text-red-600">British</span>
-                </h1>
-                <p
-                  className={`text-xs ${
-                    scrolled ? "text-gray-600" : "text-gray-200"
-                  }`}
-                >
-                  International School
-                </p>
-              </div>
-            </div>
+      <SiteNavbar />
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              {["Home", "Courses", "About", "Facilities", "Contact"].map(
-                (item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className={`${
-                      scrolled
-                        ? "text-gray-700 hover:text-blue-600"
-                        : "text-white hover:text-gray-200"
-                    } font-medium transition-colors`}
-                  >
-                    {item}
-                  </a>
-                )
-              )}
-
-              <a
-                href="/signin"
-                className={`${
-                  scrolled ? "text-gray-700" : "text-white"
-                } font-medium hover:underline`}
-              >
-                Sign In
-              </a>
-              <a
-                href="/signup"
-                className="ml-2 bg-red-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-700"
-              >
-                Sign Up
-              </a>
-            </div>
-
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`md:hidden ${
-                scrolled ? "text-gray-700" : "text-white"
-              }`}
-            >
-              {isMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white shadow-lg">
-            <div className="px-4 pt-2 pb-4 space-y-2">
-              {["Home", "Courses", "About", "Facilities", "Contact"].map(
-                (item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item}
-                  </a>
-                )
-              )}
-
-              <a
-                href="/signin"
-                className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sign In
-              </a>
-              <a
-                href="/signup"
-                className="block px-3 py-2 text-white bg-red-600 rounded-lg text-center font-semibold"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Sign Up
-              </a>
-            </div>
-          </div>
-        )}
-      </nav>
+      {/* Hero Section */}
 
       {/* Hero Section */}
       <section
@@ -269,18 +356,18 @@ const RoyalBritishBakery = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-300">
-            <a
-              href="#courses"
+            <Link
+              to="/#courses"
               className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl hover:shadow-red-500/50"
             >
               Explore Courses
-            </a>
-            <a
-              href="#contact"
+            </Link>
+            <Link
+              to="/#contact"
               className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl"
             >
               Apply Now
-            </a>
+            </Link>
           </div>
 
           <div className="mt-12 flex flex-wrap justify-center gap-8 text-white">

@@ -1,19 +1,27 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const { setUser, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+
+  React.useEffect(() => {
+    if (user) navigate("/profile");
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     try {
       await api.auth.login({ email, password });
-      navigate("/");
+      const me = await api.auth.me();
+      setUser(me);
+      navigate("/profile");
     } catch (err) {
       setError(err.data?.message || err.message);
     }
@@ -45,13 +53,13 @@ const SignIn = () => {
             Sign In
           </button>
         </form>
-
         <div className="mt-4 text-sm text-center">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-blue-900 font-semibold">
+          <Link to="/signup" className="text-blue-900 font-semibold">
             Create one
-          </a>
+          </Link>
         </div>
+        "
       </div>
     </div>
   );
