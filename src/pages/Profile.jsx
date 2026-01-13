@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { SiteNavbar } from "../pages/Home";
+import SiteNavbar from "../pages/Home";
 
 const Profile = () => {
   const { user, logout } = useAuth();

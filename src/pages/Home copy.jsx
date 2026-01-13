@@ -18,30 +18,19 @@ import {
   FaCheckCircle as CheckCircle,
   FaStar as Star,
 } from "react-icons/fa";
+
+import logo from "../assets/home-screen.png";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 
-// Mock logo - replace with your actual logo import
-import logo from "../assets/home-screen.png";
-
-// Navigation component
-const SiteNavbar = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace("#", "");
-      const el = document.getElementById(id);
-      if (el) {
-        setTimeout(() => {
-          el.scrollIntoView({ behavior: "smooth" });
-        }, 0);
-      }
-    }
-  }, [location]);
-
+export const SiteNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -51,14 +40,6 @@ const SiteNavbar = () => {
     navigate("/");
   };
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const navLinks = ["Home", "Courses", "About", "Facilities", "Contact"];
-
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -67,25 +48,24 @@ const SiteNavbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo Section - Fixed */}
           <div className="flex items-center space-x-3">
-            <div className="w-14 h-14 flex items-center justify-center bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-white/10 flex items-center justify-center">
               <img
                 src={logo}
                 alt="Royal British"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-cover"
               />
             </div>
             <div>
               <h1
-                className={`text-xl font-bold transition-colors ${
+                className={`text-xl font-bold ${
                   scrolled ? "text-blue-900" : "text-white"
                 }`}
               >
                 Royal <span className="text-red-600">British</span>
               </h1>
               <p
-                className={`text-xs transition-colors ${
+                className={`text-xs ${
                   scrolled ? "text-gray-600" : "text-gray-200"
                 }`}
               >
@@ -96,53 +76,35 @@ const SiteNavbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
-            {/* {navLinks.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className={`${
-                  scrolled
-                    ? "text-gray-700 hover:text-blue-600"
-                    : "text-white hover:text-gray-200"
-                } font-medium transition-colors`}
-              >
-                {item}
-              </a>
-            ))} */}
-            {navLinks.map((item) => (
-              <Link
-                key={item}
-                to={`/#${item.toLowerCase()}`}
-                className={`${
-                  scrolled
-                    ? "text-gray-700 hover:text-blue-600"
-                    : "text-white hover:text-gray-200"
-                } font-medium transition-colors`}
-              >
-                {item}
-              </Link>
-            ))}
+            {["Home", "Courses", "About", "Facilities", "Contact"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  to={`/#${item.toLowerCase()}`}
+                  className={`${
+                    scrolled
+                      ? "text-gray-700 hover:text-blue-600"
+                      : "text-white hover:text-gray-200"
+                  } font-medium transition-colors`}
+                >
+                  {item}
+                </Link>
+              )
+            )}
 
-            {/* <a
-              href="#contact"
-              className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition-colors"
-            >
-              Sign Up
-            </a> */}
             {user ? (
               <>
                 <Link
                   to="/profile"
                   className={`${
                     scrolled ? "text-gray-700" : "text-white"
-                  } font-medium`}
+                  } font-medium hover:underline`}
                 >
                   {user.name || "Profile"}
                 </Link>
-
                 <button
                   onClick={handleLogout}
-                  className="bg-gray-800 text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-900"
+                  className="ml-2 inline-block bg-gray-800 text-white px-3 py-1 rounded-lg font-semibold hover:bg-gray-900"
                 >
                   Sign Out
                 </button>
@@ -153,14 +115,13 @@ const SiteNavbar = () => {
                   to="/signin"
                   className={`${
                     scrolled ? "text-gray-700" : "text-white"
-                  } font-medium`}
+                  } font-medium hover:underline`}
                 >
                   Sign In
                 </Link>
-
                 <Link
                   to="/signup"
-                  className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700"
+                  className="ml-2 bg-red-600 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-700"
                 >
                   Sign Up
                 </Link>
@@ -168,11 +129,9 @@ const SiteNavbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className={`md:hidden ${scrolled ? "text-gray-700" : "text-white"}`}
-            aria-label="Toggle menu"
           >
             {isMenuOpen ? (
               <X className="w-6 h-6" />
@@ -187,23 +146,19 @@ const SiteNavbar = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white shadow-lg">
           <div className="px-4 pt-2 pb-4 space-y-2">
-            {navLinks.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item}
-              </a>
-            ))}
-            {/* <a
-              href="#contact"
-              className="block px-3 py-2 text-white bg-red-600 rounded-lg text-center font-semibold"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sign Up
-            </a> */}
+            {["Home", "Courses", "About", "Facilities", "Contact"].map(
+              (item) => (
+                <Link
+                  key={item}
+                  to={`/#${item.toLowerCase()}`}
+                  className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              )
+            )}
+
             {user ? (
               <>
                 <Link
@@ -213,13 +168,12 @@ const SiteNavbar = () => {
                 >
                   {user.name || "Profile"}
                 </Link>
-
                 <button
                   onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  className="block w-full text-left px-3 py-2 text-gray-700 rounded-lg hover:bg-blue-50"
                 >
                   Sign Out
                 </button>
@@ -233,7 +187,6 @@ const SiteNavbar = () => {
                 >
                   Sign In
                 </Link>
-
                 <Link
                   to="/signup"
                   className="block px-3 py-2 text-white bg-red-600 rounded-lg text-center font-semibold"
@@ -250,75 +203,38 @@ const SiteNavbar = () => {
   );
 };
 
-// Feature Card Component
-const FeatureCard = ({ icon, title, desc }) => (
-  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
-    <div className="text-blue-600 mb-4">{icon}</div>
-    <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-    <p className="text-gray-600">{desc}</p>
-  </div>
-);
+const RoyalBritishBakery = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+  const [scrolled, setScrolled] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
-// Course Card Component
-const CourseCard = ({ course }) => (
-  <div className="group relative bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-    <div
-      className={`absolute inset-0 bg-gradient-to-br ${course.color} opacity-0 group-hover:opacity-10 transition-opacity`}
-    ></div>
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    <div className="p-8">
-      <div
-        className={`inline-block px-4 py-2 bg-gradient-to-r ${course.color} text-white rounded-full text-sm font-semibold mb-4`}
-      >
-        {course.duration}
-      </div>
+  // Scroll to anchor section when route hash changes (e.g. /#courses)
+  const location = useLocation();
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        // small timeout to ensure element is rendered
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 0);
+      }
+    }
+  }, [location]);
 
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">{course.title}</h3>
-      {course.subtitle && (
-        <p className="text-red-600 font-semibold mb-4">{course.subtitle}</p>
-      )}
-
-      <div className="space-y-3 mb-6">
-        <div className="flex items-center text-gray-600">
-          <Clock className="w-5 h-5 mr-2 text-blue-600" />
-          <span>Duration: {course.duration}</span>
-        </div>
-        <div className="flex items-center text-gray-600">
-          <Users className="w-5 h-5 mr-2 text-blue-600" />
-          <span>Age: {course.age}</span>
-        </div>
-        <div className="flex items-center text-gray-600">
-          <BookOpen className="w-5 h-5 mr-2 text-blue-600" />
-          <span>Eligibility: {course.eligibility}</span>
-        </div>
-        <div className="flex items-center text-gray-600">
-          <Ship className="w-5 h-5 mr-2 text-blue-600" />
-          <span>Placement: {course.placement}</span>
-        </div>
-      </div>
-
-      <button
-        className={`w-full bg-gradient-to-r ${course.color} text-white py-3 rounded-full font-semibold hover:scale-105 transform transition-all`}
-      >
-        Apply Now
-      </button>
-    </div>
-  </div>
-);
-
-// Stat Card Component
-const StatCard = ({ icon, value, label, color }) => (
-  <div
-    className={`bg-gradient-to-br ${color} p-6 rounded-2xl text-white shadow-xl`}
-  >
-    {icon}
-    <div className="text-3xl font-bold mb-2">{value}</div>
-    <div className="text-sm">{label}</div>
-  </div>
-);
-
-// Main Component
-const RoyalBritishSchool = () => {
   const courses = [
     {
       title: "Bakery & Pastry International DHM",
@@ -405,7 +321,10 @@ const RoyalBritishSchool = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* Navigation */}
       <SiteNavbar />
+
+      {/* Hero Section */}
 
       {/* Hero Section */}
       <section
@@ -415,40 +334,40 @@ const RoyalBritishSchool = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-red-900">
           <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-400 rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-400 rounded-full mix-blend-overlay filter blur-3xl animate-pulse delay-1000"></div>
           </div>
         </div>
 
         <div className="relative z-10 text-center px-4 max-w-5xl">
-          <div className="mb-8">
+          <div className="mb-8 animate-fade-in">
             <div className="inline-block p-4 bg-white/10 backdrop-blur-sm rounded-2xl mb-6">
               <Clock className="w-16 h-16 text-white mx-auto" />
             </div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-slide-up">
             Shape Your Future in
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
               Hospitality Industry
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8">
+          <p className="text-xl md:text-2xl text-gray-200 mb-8 animate-slide-up delay-200">
             6 Months Professional Training • 100% Placement • International
             Opportunities
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#courses"
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up delay-300">
+            <Link
+              to="/#courses"
               className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl hover:shadow-red-500/50"
             >
               Explore Courses
-            </a>
-            <a
-              href="#contact"
+            </Link>
+            <Link
+              to="/#contact"
               className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl"
             >
               Apply Now
-            </a>
+            </Link>
           </div>
 
           <div className="mt-12 flex flex-wrap justify-center gap-8 text-white">
@@ -494,7 +413,16 @@ const RoyalBritishSchool = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, idx) => (
-              <FeatureCard key={idx} {...feature} />
+              <div
+                key={idx}
+                className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300"
+              >
+                <div className="text-blue-600 mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  {feature.title}
+                </h3>
+                <p className="text-gray-600">{feature.desc}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -516,7 +444,56 @@ const RoyalBritishSchool = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((course, idx) => (
-              <CourseCard key={idx} course={course} />
+              <div
+                key={idx}
+                className="group relative bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              >
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${course.color} opacity-0 group-hover:opacity-10 transition-opacity`}
+                ></div>
+
+                <div className="p-8">
+                  <div
+                    className={`inline-block px-4 py-2 bg-gradient-to-r ${course.color} text-white rounded-full text-sm font-semibold mb-4`}
+                  >
+                    {course.duration}
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    {course.title}
+                  </h3>
+                  {course.subtitle && (
+                    <p className="text-red-600 font-semibold mb-4">
+                      {course.subtitle}
+                    </p>
+                  )}
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-gray-600">
+                      <Clock className="w-5 h-5 mr-2 text-blue-600" />
+                      <span>Duration: {course.duration}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Users className="w-5 h-5 mr-2 text-blue-600" />
+                      <span>Age: {course.age}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <BookOpen className="w-5 h-5 mr-2 text-blue-600" />
+                      <span>Eligibility: {course.eligibility}</span>
+                    </div>
+                    <div className="flex items-center text-gray-600">
+                      <Ship className="w-5 h-5 mr-2 text-blue-600" />
+                      <span>Placement: {course.placement}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    className={`w-full bg-gradient-to-r ${course.color} text-white py-3 rounded-full font-semibold hover:scale-105 transform transition-all`}
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -606,47 +583,47 @@ const RoyalBritishSchool = () => {
               </p>
 
               <div className="space-y-4">
-                {[
-                  "Expert Lecturers & Industry Exposure",
-                  "Line Training & Placements",
-                  "Student Success & Future Development",
-                ].map((text, idx) => (
-                  <div key={idx} className="flex items-start">
-                    <Star className="w-6 h-6 mr-3 text-yellow-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-700">{text}</p>
-                  </div>
-                ))}
+                <div className="flex items-start">
+                  <Star className="w-6 h-6 mr-3 text-yellow-500 flex-shrink-0 mt-1" />
+                  <p className="text-gray-700">
+                    Expert Lecturers & Industry Exposure
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <Star className="w-6 h-6 mr-3 text-yellow-500 flex-shrink-0 mt-1" />
+                  <p className="text-gray-700">Line Training & Placements</p>
+                </div>
+                <div className="flex items-start">
+                  <Star className="w-6 h-6 mr-3 text-yellow-500 flex-shrink-0 mt-1" />
+                  <p className="text-gray-700">
+                    Student Success & Future Development
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <StatCard
-                icon={<Globe className="w-12 h-12 mb-4" />}
-                value="40+"
-                label="Shipping Companies"
-                color="from-blue-600 to-blue-800"
-              />
-              <div className="mt-8">
-                <StatCard
-                  icon={<Users className="w-12 h-12 mb-4" />}
-                  value="5"
-                  label="Countries Network"
-                  color="from-red-600 to-red-800"
-                />
-              </div>
-              <StatCard
-                icon={<Award className="w-12 h-12 mb-4" />}
-                value="100%"
-                label="Placement Rate"
-                color="from-blue-800 to-blue-900"
-              />
-              <div className="mt-8">
-                <StatCard
-                  icon={<BookOpen className="w-12 h-12 mb-4" />}
-                  value="World"
-                  label="Class Faculty"
-                  color="from-red-800 to-red-900"
-                />
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-6 rounded-2xl text-white shadow-xl">
+                  <Globe className="w-12 h-12 mb-4" />
+                  <div className="text-3xl font-bold mb-2">40+</div>
+                  <div className="text-sm">Shipping Companies</div>
+                </div>
+                <div className="bg-gradient-to-br from-red-600 to-red-800 p-6 rounded-2xl text-white shadow-xl mt-8">
+                  <Users className="w-12 h-12 mb-4" />
+                  <div className="text-3xl font-bold mb-2">5</div>
+                  <div className="text-sm">Countries Network</div>
+                </div>
+                <div className="bg-gradient-to-br from-blue-800 to-blue-900 p-6 rounded-2xl text-white shadow-xl">
+                  <Award className="w-12 h-12 mb-4" />
+                  <div className="text-3xl font-bold mb-2">100%</div>
+                  <div className="text-sm">Placement Rate</div>
+                </div>
+                <div className="bg-gradient-to-br from-red-800 to-red-900 p-6 rounded-2xl text-white shadow-xl mt-8">
+                  <BookOpen className="w-12 h-12 mb-4" />
+                  <div className="text-3xl font-bold mb-2">World</div>
+                  <div className="text-sm">Class Faculty</div>
+                </div>
               </div>
             </div>
           </div>
@@ -670,46 +647,61 @@ const RoyalBritishSchool = () => {
 
           <div className="grid md:grid-cols-2 gap-12">
             <div className="space-y-8">
-              {[
-                {
-                  icon: <Phone className="w-6 h-6" />,
-                  title: "Phone",
-                  text: "833 1086 333",
-                },
-                {
-                  icon: <Mail className="w-6 h-6" />,
-                  title: "Email",
-                  text: "enquiry@royalbritish.com",
-                },
-                {
-                  icon: <MapPin className="w-6 h-6" />,
-                  title: "Address",
-                  text: "Plot No. Rm Trinity Art, Visakalakshi Nagar\nVetrinary Colony, Visakhapatnam - 530040\nA.P. India",
-                },
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-start space-x-4">
-                  <div className="bg-white/10 p-4 rounded-full">
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold mb-2">{item.title}</h3>
-                    <p className="text-gray-200 whitespace-pre-line">
-                      {item.text}
-                    </p>
-                  </div>
+              <div className="flex items-start space-x-4">
+                <div className="bg-white/10 p-4 rounded-full">
+                  <Phone className="w-6 h-6" />
                 </div>
-              ))}
+                <div>
+                  <h3 className="font-semibold mb-2">Phone</h3>
+                  <p className="text-gray-200">833 1086 333</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4">
+                <div className="bg-white/10 p-4 rounded-full">
+                  <Mail className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Email</h3>
+                  <p className="text-gray-200">enquiry@royalbritish.com</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-4">
+                <div className="bg-white/10 p-4 rounded-full">
+                  <MapPin className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Address</h3>
+                  <p className="text-gray-200">
+                    Plot No. Rm Trinity Art, Visakalakshi Nagar
+                    <br />
+                    Vetrinary Colony, Visakhapatnam - 530040
+                    <br />
+                    A.P. India
+                  </p>
+                </div>
+              </div>
 
               <div className="flex space-x-4">
-                {[Facebook, Instagram, Linkedin].map((Icon, idx) => (
-                  <a
-                    key={idx}
-                    href="#"
-                    className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
-                  >
-                    <Icon className="w-6 h-6" />
-                  </a>
-                ))}
+                <a
+                  href="#"
+                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a
+                  href="#"
+                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <Instagram className="w-6 h-6" />
+                </a>
+                <a
+                  href="#"
+                  className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+                >
+                  <Linkedin className="w-6 h-6" />
+                </a>
               </div>
             </div>
 
@@ -776,32 +768,36 @@ const RoyalBritishSchool = () => {
             <div>
               <h4 className="font-bold mb-4">Vision & Values</h4>
               <ul className="space-y-2 text-gray-400">
-                {[
-                  "Be Kind",
-                  "Be Respectful",
-                  "Be Responsible",
-                  "Work Hard",
-                  "Have Fun",
-                ].map((value, idx) => (
-                  <li key={idx}>{value}</li>
-                ))}
+                <li>Be Kind</li>
+                <li>Be Respectful</li>
+                <li>Be Responsible</li>
+                <li>Work Hard</li>
+                <li>Have Fun</li>
               </ul>
             </div>
             <div>
               <h4 className="font-bold mb-4">Quick Links</h4>
               <ul className="space-y-2 text-gray-400">
-                {["Courses", "About Us", "Facilities", "Contact"].map(
-                  (link, idx) => (
-                    <li key={idx}>
-                      <a
-                        href={`#${link.toLowerCase().replace(" ", "")}`}
-                        className="hover:text-white"
-                      >
-                        {link}
-                      </a>
-                    </li>
-                  )
-                )}
+                <li>
+                  <a href="#courses" className="hover:text-white">
+                    Courses
+                  </a>
+                </li>
+                <li>
+                  <a href="#about" className="hover:text-white">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#facilities" className="hover:text-white">
+                    Facilities
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" className="hover:text-white">
+                    Contact
+                  </a>
+                </li>
               </ul>
             </div>
             <div>
@@ -832,4 +828,4 @@ const RoyalBritishSchool = () => {
   );
 };
 
-export default RoyalBritishSchool;
+export default RoyalBritishBakery;
