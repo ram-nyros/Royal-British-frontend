@@ -1,45 +1,44 @@
 import React from "react";
-import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import SiteNavbar from "../pages/Home";
+import { useSelector } from "react-redux";
+import { FaArrowLeft } from "react-icons/fa";
 
 const Profile = () => {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  if (!user)
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow">
-          <p className="text-center">You are not signed in.</p>
-        </div>
-      </div>
-    );
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
+  const { user } = useSelector((state) => state.auth);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <SiteNavbar />
-      <div className="pt-24 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow">
-          <h2 className="text-2xl font-bold mb-4">Profile</h2>
-          <p className="mb-2">
-            <strong>Name:</strong> {user.name}
-          </p>
-          <p className="mb-4">
-            <strong>Email:</strong> {user.email}
-          </p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
           <button
-            onClick={handleLogout}
-            className="mt-2 w-full bg-gray-800 text-white py-3 rounded-lg"
+            onClick={() => navigate(-1)}
+            className="bg-gray-200 p-3 rounded-full hover:bg-gray-300"
           >
-            Sign Out
+            <FaArrowLeft />
           </button>
+
+          <h2 className="text-2xl font-bold">Profile</h2>
         </div>
+
+        {/* Content */}
+        {user ? (
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-500">Name</p>
+              <p className="font-semibold">{user.name}</p>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-500">Email</p>
+              <p className="font-semibold">{user.email}</p>
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">No user data found.</p>
+        )}
       </div>
     </div>
   );
