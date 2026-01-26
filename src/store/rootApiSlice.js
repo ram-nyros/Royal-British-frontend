@@ -7,7 +7,7 @@ export const rootApiSlice = createApi({
   tagTypes: ["Auth", "User"],
 
   baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
+    baseUrl: `${API_BASE_URL}/api`,
     credentials: "include",
 
     prepareHeaders: (headers, { getState }) => {

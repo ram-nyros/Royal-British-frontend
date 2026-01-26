@@ -1,17 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../services/api";
-import { useAuth } from "../contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { useRegisterMutation } from "../features/auth/authApiSlice";
+import { setCredentials } from "../features/auth/authSlice";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { setUser, user } = useAuth();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const [registerUser, { isLoading }] = useRegisterMutation();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (user) navigate("/profile");
   }, [user, navigate]);
 
@@ -19,12 +22,11 @@ const SignUp = () => {
     e.preventDefault();
     setError(null);
     try {
-      await api.auth.register({ name, email, password });
-      const me = await api.auth.me();
-      setUser(me);
+      const data = await registerUser({ name, email, password }).unwrap();
+      dispatch(setCredentials(data));
       navigate("/profile");
     } catch (err) {
-      setError(err.data?.message || err.message);
+      setError(err?.data?.message || err?.message);
     }
   };
 
@@ -58,8 +60,11 @@ const SignUp = () => {
             required
             className="w-full px-4 py-3 border rounded-lg focus:outline-none"
           />
-          <button className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold">
-            Create Account
+          <button
+            disabled={isLoading}
+            className="w-full bg-red-600 text-white py-3 rounded-lg font-semibold disabled:opacity-60"
+          >
+            {isLoading ? "Creating account..." : "Create Account"}
           </button>
         </form>
 
