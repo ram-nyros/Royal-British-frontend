@@ -66,62 +66,51 @@ const SiteNavbar = () => {
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? "bg-white shadow-lg" : "bg-transparent"
+        scrolled
+          ? "bg-white/95 shadow-xl"
+          : "bg-white/10 backdrop-blur-2xl border-b border-white/20"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center py-4">
           {/* Logo Section - Fixed */}
-          <div className="flex items-center space-x-3">
-            <div className="w-14 h-14 flex items-center justify-center bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 flex items-center justify-center bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white/70 ring-2 ring-red-500/20">
               <img
                 src={logo}
                 alt="Royal British"
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain drop-shadow-sm"
               />
             </div>
             <div>
               <h1
-                className={`text-xl font-bold transition-colors ${
+                className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors ${
                   scrolled ? "text-blue-900" : "text-white"
                 }`}
               >
                 Royal <span className="text-red-600">British</span>
               </h1>
               <p
-                className={`text-xs transition-colors ${
-                  scrolled ? "text-gray-600" : "text-gray-200"
+                className={`text-sm sm:text-base transition-colors ${
+                  scrolled ? "text-gray-600" : "text-gray-100"
                 }`}
               >
-                International School
+                International School of Culinary Arts
               </p>
             </div>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {/* {navLinks.map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className={`${
-                  scrolled
-                    ? "text-gray-700 hover:text-blue-600"
-                    : "text-white hover:text-gray-200"
-                } font-medium transition-colors`}
-              >
-                {item}
-              </a>
-            ))} */}
+          <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((item) => (
               <Link
                 key={item}
                 to={`/#${item.toLowerCase()}`}
-                className={`${
+                className={`text-xs font-semibold uppercase tracking-[0.2em] transition-colors ${
                   scrolled
-                    ? "text-gray-700 hover:text-blue-600"
-                    : "text-white hover:text-gray-200"
-                } font-medium transition-colors`}
+                    ? "text-gray-600 hover:text-blue-700"
+                    : "text-white/80 hover:text-white"
+                }`}
               >
                 {item}
               </Link>
@@ -137,16 +126,16 @@ const SiteNavbar = () => {
               <>
                 <Link
                   to="/profile"
-                  className={`${
+                  className={`text-xs font-semibold uppercase tracking-[0.2em] ${
                     scrolled ? "text-gray-700" : "text-white"
-                  } font-medium`}
+                  }`}
                 >
                   {user.name || "Profile"}
                 </Link>
 
                 <button
                   onClick={handleLogout}
-                  className="bg-gray-800 text-white px-4 py-2 rounded-full font-semibold hover:bg-gray-900"
+                  className="bg-gray-900 text-white px-5 py-2 rounded-full font-semibold shadow-lg shadow-gray-900/20 hover:translate-y-0.5 transition"
                 >
                   Sign Out
                 </button>
@@ -155,16 +144,16 @@ const SiteNavbar = () => {
               <>
                 <Link
                   to="/signin"
-                  className={`${
-                    scrolled ? "text-gray-700" : "text-white"
-                  } font-medium`}
+                  className={`text-xs font-semibold uppercase tracking-[0.2em] ${
+                    scrolled ? "text-gray-600" : "text-white"
+                  }`}
                 >
                   Sign In
                 </Link>
 
                 <Link
                   to="/signup"
-                  className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700"
+                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-2 rounded-full font-semibold shadow-lg shadow-red-500/30 hover:shadow-red-500/50"
                 >
                   Sign Up
                 </Link>
@@ -189,13 +178,13 @@ const SiteNavbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg">
-          <div className="px-4 pt-2 pb-4 space-y-2">
+        <div className="md:hidden bg-white shadow-2xl border-t border-gray-100">
+          <div className="px-4 pt-2 pb-6 space-y-2">
             {navLinks.map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item}
@@ -212,7 +201,7 @@ const SiteNavbar = () => {
               <>
                 <Link
                   to="/profile"
-                  className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {user.name || "Profile"}
@@ -223,7 +212,7 @@ const SiteNavbar = () => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  className="block w-full text-left px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
                 >
                   Sign Out
                 </button>
@@ -232,7 +221,7 @@ const SiteNavbar = () => {
               <>
                 <Link
                   to="/signin"
-                  className="block px-3 py-2 text-gray-700 hover:bg-blue-50 rounded-lg"
+                  className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign In
@@ -240,7 +229,7 @@ const SiteNavbar = () => {
 
                 <Link
                   to="/signup"
-                  className="block px-3 py-2 text-white bg-red-600 rounded-lg text-center font-semibold"
+                  className="block px-3 py-3 text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl text-center font-semibold shadow-lg"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign Up
@@ -423,50 +412,102 @@ const RoyalBritishSchool = () => {
           </div>
         </div>
 
-        <div className="relative z-10 text-center px-4 max-w-5xl">
-          <div className="mb-8">
-            <div className="inline-block p-4 bg-white/10 backdrop-blur-sm rounded-2xl mb-6">
-              <Clock className="w-16 h-16 text-white mx-auto" />
-            </div>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-            Shape Your Future in
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
-              Hospitality Industry
-            </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8">
-            6 Months Professional Training • 100% Placement • International
-            Opportunities
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#courses"
-              className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl hover:shadow-red-500/50"
-            >
-              Explore Courses
-            </a>
-            <a
-              href="#contact"
-              className="bg-white text-blue-900 px-8 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl"
-            >
-              Apply Now
-            </a>
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
+          <div className="inline-flex items-center gap-3 px-5 py-2 mb-8 rounded-full bg-white/15 text-white/80 text-sm tracking-wide backdrop-blur">
+            <Clock className="w-5 h-5" />
+            Now enrolling for the July 2024 intake
           </div>
 
-          <div className="mt-12 flex flex-wrap justify-center gap-8 text-white">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-yellow-400">10%</div>
-              <div className="text-sm">Discount Offer</div>
+          <div className="flex flex-col-reverse lg:flex-row items-center gap-12 text-center lg:text-left">
+            <div className="flex-1">
+              <p className="uppercase tracking-[0.3em] text-sm text-white/70 mb-4">
+                Royal British Culinary Academy
+              </p>
+              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                Shape Your Future in
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
+                  Hospitality Industry
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl">
+                6 Months Professional Training • 100% Placement • International
+                Opportunities
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a
+                  href="#courses"
+                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-10 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl hover:shadow-red-500/50"
+                >
+                  Explore Courses
+                </a>
+                <a
+                  href="#contact"
+                  className="bg-white/90 text-blue-900 px-10 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl"
+                >
+                  Apply Now
+                </a>
+              </div>
+
+              <div className="mt-12 flex flex-wrap justify-center lg:justify-start gap-8 text-white">
+                {[
+                  { value: "10%", label: "Discount Offer" },
+                  { value: "100%", label: "Placement" },
+                  { value: "40+", label: "Companies" },
+                ].map((stat) => (
+                  <div key={stat.label} className="text-center">
+                    <div className="text-4xl font-bold text-yellow-300">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm tracking-wide text-white/80">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-yellow-400">100%</div>
-              <div className="text-sm">Placement</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-yellow-400">40+</div>
-              <div className="text-sm">Companies</div>
+
+            <div className="flex-1 max-w-md w-full">
+              <div className="relative bg-white/10 backdrop-blur-xl p-1 rounded-[32px] border border-white/30 shadow-2xl">
+                <div className="bg-white rounded-[28px] p-8 text-gray-900 space-y-6">
+                  <div className="w-48 h-48 mx-auto rounded-3xl border-4 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden">
+                    <img
+                      src={logo}
+                      alt="Royal British logo"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="text-center space-y-2">
+                    <p className="text-sm uppercase tracking-[0.4em] text-gray-500">
+                      Est. 2009
+                    </p>
+                    <p className="text-2xl font-bold text-blue-900">
+                      Trusted by aspiring chefs worldwide
+                    </p>
+                    <p className="text-gray-500 text-sm">
+                      Book a campus tour to experience our state-of-the-art
+                      kitchens
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 text-center text-sm">
+                    <div>
+                      <p className="text-2xl font-bold text-blue-900">15+</p>
+                      <p className="text-gray-500">Years Legacy</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-blue-900">6K</p>
+                      <p className="text-gray-500">Alumni</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-blue-900">24x7</p>
+                      <p className="text-gray-500">Support</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -top-5 -right-5 bg-gradient-to-r from-yellow-400 to-red-400 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg uppercase tracking-wide">
+                  Premium Campus
+                </div>
+              </div>
             </div>
           </div>
         </div>
