@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useLoginMutation } from "../featues/auth/authApiSlice";
-import { setCredentials } from "../featues/auth/authSlice";
+import { useLoginMutation } from "../features/auth/authApiSlice";
+import { setCredentials } from "../features/auth/authSlice";
 
 const SignIn = () => {
   const navigate = useNavigate();

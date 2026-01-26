@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_BASE_URL } from "../config/apiBaseUrl";
 
 export const rootApiSlice = createApi({
   reducerPath: "api",
@@ -6,7 +7,7 @@ export const rootApiSlice = createApi({
   tagTypes: ["Auth", "User"],
 
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_BASE_URL,
+    baseUrl: API_BASE_URL,
     credentials: "include",
 
     prepareHeaders: (headers, { getState }) => {
