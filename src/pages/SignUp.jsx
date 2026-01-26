@@ -15,7 +15,7 @@ const SignUp = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (user) navigate("/profile");
+    if (user) navigate("/");
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
@@ -24,7 +24,7 @@ const SignUp = () => {
     try {
       const data = await registerUser({ name, email, password }).unwrap();
       dispatch(setCredentials(data));
-      navigate("/profile");
+      navigate("/");
     } catch (err) {
       setError(err?.data?.message || err?.message);
     }

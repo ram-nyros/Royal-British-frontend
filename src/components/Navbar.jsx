@@ -1,12 +1,16 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout as logoutAction } from "../features/auth/authSlice";
+import api from "../services/api";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    logout();
+    api.auth.logout();
+    dispatch(logoutAction());
     navigate("/");
   };
 
@@ -33,7 +37,7 @@ const Navbar = () => {
                 onClick={handleLogout}
                 className="ml-2 inline-block bg-gray-800 text-white px-3 py-1 rounded-lg font-semibold hover:bg-gray-900"
               >
-                Sign Out
+                Logout
               </button>
             </>
           ) : (

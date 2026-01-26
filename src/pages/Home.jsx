@@ -19,7 +19,9 @@ import {
   FaStar as Star,
 } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { logout as logoutAction } from "../features/auth/authSlice";
+import api from "../services/api";
 
 // Mock logo - replace with your actual logo import
 import logo from "../assets/home-screen.png";
@@ -43,11 +45,13 @@ const SiteNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    logout();
+    api.auth.logout();
+    dispatch(logoutAction());
     navigate("/");
   };
 
@@ -800,7 +804,7 @@ const RoyalBritishSchool = () => {
                         {link}
                       </a>
                     </li>
-                  )
+                  ),
                 )}
               </ul>
             </div>

@@ -19,7 +19,7 @@ const SignIn = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate("/profile");
+      navigate("/");
     }
   }, [user, navigate]);
 
@@ -31,7 +31,7 @@ const SignIn = () => {
 
       dispatch(setCredentials(data));
 
-      navigate("/profile");
+      navigate("/");
     } catch (err) {
       console.error("Login failed:", err);
     }
