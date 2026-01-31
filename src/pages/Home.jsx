@@ -21,6 +21,7 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout as logoutAction } from "../features/auth/authSlice";
+import { useSubmitApplicationMutation } from "../features/auth/authApiSlice";
 
 // Mock logo - replace with your actual logo import
 import logo from "../assets/home-screen.png";
@@ -328,6 +329,59 @@ const StatCard = ({ icon, value, label, color }) => (
 
 // Main Component
 const RoyalBritishSchool = () => {
+  const [submitApplication, { isLoading: isSubmitting }] =
+    useSubmitApplicationMutation();
+  const [applicationForm, setApplicationForm] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    course: "",
+    message: "",
+  });
+  const [formMessage, setFormMessage] = useState({ type: "", text: "" });
+
+  const handleApplicationSubmit = async (e) => {
+    e.preventDefault();
+    setFormMessage({ type: "", text: "" });
+
+    console.log("[Home] Submitting application:", applicationForm);
+
+    if (
+      !applicationForm.name ||
+      !applicationForm.email ||
+      !applicationForm.mobile ||
+      !applicationForm.course
+    ) {
+      setFormMessage({
+        type: "error",
+        text: "Please fill all required fields",
+      });
+      return;
+    }
+
+    try {
+      await submitApplication(applicationForm).unwrap();
+      console.log("[Home] Application submitted successfully");
+      setFormMessage({
+        type: "success",
+        text: "Application submitted successfully!",
+      });
+      setApplicationForm({
+        name: "",
+        email: "",
+        mobile: "",
+        course: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error("[Home] Error submitting application:", error);
+      setFormMessage({
+        type: "error",
+        text: error?.data?.message || "Failed to submit application",
+      });
+    }
+  };
+
   const courses = [
     {
       title: "Bakery & Pastry International DHM",
@@ -823,46 +877,107 @@ const RoyalBritishSchool = () => {
               <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6">
                 Application Form
               </h3>
-              <form className="space-y-3 lg:space-y-4">
+              {formMessage.text && (
+                <div
+                  className={`mb-4 p-3 rounded-lg text-sm ${
+                    formMessage.type === "success"
+                      ? "bg-green-500/20 text-green-200 border border-green-500/30"
+                      : "bg-red-500/20 text-red-200 border border-red-500/30"
+                  }`}
+                >
+                  {formMessage.text}
+                </div>
+              )}
+              <form
+                className="space-y-3 lg:space-y-4"
+                onSubmit={handleApplicationSubmit}
+              >
                 <input
                   type="text"
                   placeholder="Full Name"
+                  value={applicationForm.name}
+                  onChange={(e) =>
+                    setApplicationForm({
+                      ...applicationForm,
+                      name: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 />
                 <input
                   type="email"
                   placeholder="Email Address"
+                  value={applicationForm.email}
+                  onChange={(e) =>
+                    setApplicationForm({
+                      ...applicationForm,
+                      email: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 />
                 <input
                   type="tel"
                   placeholder="Mobile Number"
+                  value={applicationForm.mobile}
+                  onChange={(e) =>
+                    setApplicationForm({
+                      ...applicationForm,
+                      mobile: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 />
-                <select className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40 text-sm lg:text-base">
+                <select
+                  value={applicationForm.course}
+                  onChange={(e) =>
+                    setApplicationForm({
+                      ...applicationForm,
+                      course: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40 text-sm lg:text-base"
+                >
                   <option value="" className="bg-blue-900">
                     Select Course
                   </option>
-                  <option value="dhm" className="bg-blue-900">
+                  <option
+                    value="Bakery & Pastry International DHM"
+                    className="bg-blue-900"
+                  >
                     Bakery & Pastry International DHM
                   </option>
-                  <option value="diploma" className="bg-blue-900">
+                  <option
+                    value="Bakery & Pastry International Diploma"
+                    className="bg-blue-900"
+                  >
                     Bakery & Pastry International Diploma
                   </option>
-                  <option value="basic" className="bg-blue-900">
+                  <option
+                    value="Diploma in Bakery & Pastry"
+                    className="bg-blue-900"
+                  >
                     Diploma in Bakery & Pastry
                   </option>
                 </select>
                 <textarea
                   placeholder="Message (Optional)"
                   rows="4"
+                  value={applicationForm.message}
+                  onChange={(e) =>
+                    setApplicationForm({
+                      ...applicationForm,
+                      message: e.target.value,
+                    })
+                  }
                   className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 ></textarea>
                 <button
                   type="submit"
-                  className="w-full bg-white text-blue-900 py-2.5 lg:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm lg:text-base"
+                  disabled={isSubmitting}
+                  className="w-full bg-white text-blue-900 py-2.5 lg:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm lg:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Submit Application
+                  {isSubmitting ? "Submitting..." : "Submit Application"}
                 </button>
               </form>
             </div>
