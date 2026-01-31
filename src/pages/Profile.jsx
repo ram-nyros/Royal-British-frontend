@@ -706,93 +706,123 @@ const Profile = () => {
                       const certData = profile?.certificates?.[cert.key];
                       const isUploading = uploading[cert.key];
                       const IconComponent = cert.icon;
+                      const isImage = certData?.mimeType?.startsWith("image/");
 
                       return (
                         <div
                           key={cert.key}
-                          className={`relative border-2 rounded-xl p-4 transition-all ${
+                          className={`relative border-2 rounded-xl overflow-hidden transition-all ${
                             certData
                               ? "border-green-200 bg-green-50"
                               : "border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"
                           }`}
                         >
-                          {certData && (
-                            <div className="absolute top-2 right-2">
-                              <FaCheckCircle className="text-green-500" />
+                          {certData ? (
+                            /* Uploaded Certificate Card */
+                            <div>
+                              {/* Certificate Preview */}
+                              <div className="relative h-40 bg-gray-100">
+                                {isImage ? (
+                                  <img
+                                    src={certData.dataUrl}
+                                    alt={cert.label}
+                                    className="w-full h-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                                    onClick={() => viewFile(cert.key)}
+                                  />
+                                ) : (
+                                  <div
+                                    className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                                    onClick={() => viewFile(cert.key)}
+                                  >
+                                    <FaFileAlt className="text-4xl text-red-500 mb-2" />
+                                    <span className="text-xs text-gray-500 uppercase font-medium">
+                                      {certData.mimeType?.split("/")[1] ||
+                                        "PDF"}
+                                    </span>
+                                  </div>
+                                )}
+                                {/* Status Badge */}
+                                <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+                                  <FaCheckCircle className="text-[10px]" />
+                                  Uploaded
+                                </div>
+                              </div>
+
+                              {/* Certificate Info */}
+                              <div className="p-4">
+                                <h4 className="font-semibold text-gray-800 text-sm truncate">
+                                  {cert.label}
+                                </h4>
+                                <p className="text-xs text-gray-500 mt-1 truncate">
+                                  {certData.originalName}
+                                </p>
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {formatFileSize(certData.size)}
+                                </p>
+
+                                {/* Actions */}
+                                <div className="mt-3 flex items-center gap-2">
+                                  <button
+                                    onClick={() => viewFile(cert.key)}
+                                    className="flex-1 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors text-xs font-medium flex items-center justify-center gap-1"
+                                  >
+                                    <FaEye />
+                                    View
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteFile(cert.key)}
+                                    className="flex-1 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors text-xs font-medium flex items-center justify-center gap-1"
+                                  >
+                                    <FaTrash />
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            /* Empty Upload Card */
+                            <div className="p-4 text-center">
+                              <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center bg-gray-100">
+                                <IconComponent className="text-2xl text-gray-400" />
+                              </div>
+                              <h4 className="font-semibold text-gray-800 text-sm">
+                                {cert.label}
+                              </h4>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {cert.description}
+                              </p>
+                              <input
+                                ref={(el) =>
+                                  (certificateRefs.current[cert.key] = el)
+                                }
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                                onChange={(e) =>
+                                  handleCertificateUpload(cert.key, e)
+                                }
+                                className="hidden"
+                              />
+                              <button
+                                onClick={() =>
+                                  certificateRefs.current[cert.key]?.click()
+                                }
+                                disabled={isUploading}
+                                className="mt-4 w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                              >
+                                {isUploading ? (
+                                  <>
+                                    <FaSpinner className="animate-spin" />
+                                    Uploading...
+                                  </>
+                                ) : (
+                                  <>
+                                    <FaUpload />
+                                    Upload Document
+                                  </>
+                                )}
+                              </button>
                             </div>
                           )}
-
-                          <div className="text-center">
-                            <div
-                              className={`w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center ${
-                                certData ? "bg-green-100" : "bg-gray-100"
-                              }`}
-                            >
-                              <IconComponent
-                                className={`text-xl ${
-                                  certData ? "text-green-600" : "text-gray-400"
-                                }`}
-                              />
-                            </div>
-                            <h4 className="font-semibold text-gray-800 text-sm">
-                              {cert.label}
-                            </h4>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {cert.description}
-                            </p>
-
-                            {certData ? (
-                              <div className="mt-3 flex items-center justify-center gap-2">
-                                <button
-                                  onClick={() => viewFile(cert.key)}
-                                  className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
-                                  title="View"
-                                >
-                                  <FaEye />
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteFile(cert.key)}
-                                  className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
-                                  title="Delete"
-                                >
-                                  <FaTrash />
-                                </button>
-                              </div>
-                            ) : (
-                              <>
-                                <input
-                                  ref={(el) =>
-                                    (certificateRefs.current[cert.key] = el)
-                                  }
-                                  type="file"
-                                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                                  onChange={(e) =>
-                                    handleCertificateUpload(cert.key, e)
-                                  }
-                                  className="hidden"
-                                />
-                                <button
-                                  onClick={() =>
-                                    certificateRefs.current[cert.key]?.click()
-                                  }
-                                  disabled={isUploading}
-                                  className="mt-3 w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
-                                >
-                                  {isUploading ? (
-                                    <>
-                                      <FaSpinner className="animate-spin" />
-                                      Uploading...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <FaUpload />
-                                      Upload
-                                    </>
-                                  )}
-                                </button>
-                              </>
-                            )}
-                          </div>
                         </div>
                       );
                     })}
@@ -817,40 +847,59 @@ const Profile = () => {
 
                   <div className="p-6">
                     {profile?.certificates?.otherDocuments?.length > 0 && (
-                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                         {profile.certificates.otherDocuments.map((doc) => (
                           <div
                             key={doc._id}
-                            className="flex items-center justify-between bg-gray-50 rounded-xl p-4"
+                            className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:shadow-md transition-shadow"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <FaFileAlt className="text-purple-600" />
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium text-gray-800 truncate max-w-[180px]">
-                                  {doc.originalName}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  {formatFileSize(doc.size)}
-                                </p>
-                              </div>
+                            {/* Document Preview */}
+                            <div
+                              className="h-32 bg-gray-100 cursor-pointer relative"
+                              onClick={() => viewFile("other", doc._id)}
+                            >
+                              {doc.mimeType?.startsWith("image/") ? (
+                                <img
+                                  src={doc.dataUrl}
+                                  alt={doc.originalName}
+                                  className="w-full h-full object-cover hover:opacity-90 transition-opacity"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex flex-col items-center justify-center hover:bg-gray-200 transition-colors">
+                                  <FaFileAlt className="text-3xl text-red-500 mb-1" />
+                                  <span className="text-xs text-gray-500 uppercase font-medium">
+                                    {doc.mimeType?.split("/")[1] || "File"}
+                                  </span>
+                                </div>
+                              )}
                             </div>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => viewFile("other", doc._id)}
-                                className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
-                              >
-                                <FaEye />
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleDeleteFile("other", doc._id)
-                                }
-                                className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-                              >
-                                <FaTrash />
-                              </button>
+
+                            {/* Document Info */}
+                            <div className="p-3">
+                              <p className="text-sm font-medium text-gray-800 truncate">
+                                {doc.originalName}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {formatFileSize(doc.size)}
+                              </p>
+                              <div className="mt-2 flex items-center gap-2">
+                                <button
+                                  onClick={() => viewFile("other", doc._id)}
+                                  className="flex-1 py-1.5 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors text-xs font-medium flex items-center justify-center gap-1"
+                                >
+                                  <FaEye className="text-[10px]" />
+                                  View
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteFile("other", doc._id)
+                                  }
+                                  className="flex-1 py-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors text-xs font-medium flex items-center justify-center gap-1"
+                                >
+                                  <FaTrash className="text-[10px]" />
+                                  Delete
+                                </button>
+                              </div>
                             </div>
                           </div>
                         ))}
