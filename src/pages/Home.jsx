@@ -36,8 +36,16 @@ const SiteNavbar = () => {
       const el = document.getElementById(id);
       if (el) {
         setTimeout(() => {
-          el.scrollIntoView({ behavior: "smooth" });
-        }, 0);
+          const navbarHeight = 100; // Adjust based on your navbar height
+          const elementPosition =
+            el.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - navbarHeight;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }, 100);
       }
     }
   }, [location]);
@@ -63,6 +71,23 @@ const SiteNavbar = () => {
 
   const navLinks = ["Home", "Courses", "About", "Facilities", "Contact"];
 
+  const handleNavClick = (e, item) => {
+    e.preventDefault();
+    const target = document.getElementById(item.toLowerCase());
+    if (target) {
+      const navbarHeight = 100;
+      const elementPosition =
+        target.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth",
+      });
+    }
+    setIsMenuOpen(false);
+  };
+
   return (
     <nav
       className={`fixed w-full z-50 transition-all duration-300 ${
@@ -72,10 +97,10 @@ const SiteNavbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo Section - Fixed */}
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 flex items-center justify-center bg-white rounded-2xl shadow-xl overflow-hidden border-4 border-white/70 ring-2 ring-red-500/20">
+        <div className="flex justify-between items-center py-3 md:py-4">
+          {/* Logo Section - Responsive sizing */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border-2 sm:border-4 border-white/70 ring-2 ring-red-500/20">
               <img
                 src={logo}
                 alt="Royal British"
@@ -84,14 +109,14 @@ const SiteNavbar = () => {
             </div>
             <div>
               <h1
-                className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors ${
+                className={`text-lg sm:text-2xl md:text-3xl font-bold tracking-tight transition-colors ${
                   scrolled ? "text-blue-900" : "text-white"
                 }`}
               >
                 Royal <span className="text-red-600">British</span>
               </h1>
               <p
-                className={`text-sm sm:text-base transition-colors ${
+                className={`text-xs sm:text-sm md:text-base transition-colors hidden sm:block ${
                   scrolled ? "text-gray-600" : "text-gray-100"
                 }`}
               >
@@ -101,11 +126,12 @@ const SiteNavbar = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-4 xl:space-x-6">
             {navLinks.map((item) => (
-              <Link
+              <a
                 key={item}
-                to={`/#${item.toLowerCase()}`}
+                href={`#${item.toLowerCase()}`}
+                onClick={(e) => handleNavClick(e, item)}
                 className={`text-xs font-semibold uppercase tracking-[0.2em] transition-colors ${
                   scrolled
                     ? "text-gray-600 hover:text-blue-700"
@@ -113,15 +139,9 @@ const SiteNavbar = () => {
                 }`}
               >
                 {item}
-              </Link>
+              </a>
             ))}
 
-            {/* <a
-              href="#contact"
-              className="bg-red-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-red-700 transition-colors"
-            >
-              Sign Up
-            </a> */}
             {user ? (
               <>
                 <Link
@@ -135,7 +155,7 @@ const SiteNavbar = () => {
 
                 <button
                   onClick={handleLogout}
-                  className="bg-gray-900 text-white px-5 py-2 rounded-full font-semibold shadow-lg shadow-gray-900/20 hover:translate-y-0.5 transition"
+                  className="bg-gray-900 text-white px-4 xl:px-5 py-2 rounded-full font-semibold shadow-lg shadow-gray-900/20 hover:translate-y-0.5 transition text-sm"
                 >
                   Sign Out
                 </button>
@@ -153,7 +173,7 @@ const SiteNavbar = () => {
 
                 <Link
                   to="/signup"
-                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-6 py-2 rounded-full font-semibold shadow-lg shadow-red-500/30 hover:shadow-red-500/50"
+                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-4 xl:px-6 py-2 rounded-full font-semibold shadow-lg shadow-red-500/30 hover:shadow-red-500/50 text-sm"
                 >
                   Sign Up
                 </Link>
@@ -164,7 +184,7 @@ const SiteNavbar = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`md:hidden ${scrolled ? "text-gray-700" : "text-white"}`}
+            className={`lg:hidden ${scrolled ? "text-gray-700" : "text-white"}`}
             aria-label="Toggle menu"
           >
             {isMenuOpen ? (
@@ -178,30 +198,23 @@ const SiteNavbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white shadow-2xl border-t border-gray-100">
+        <div className="lg:hidden bg-white shadow-2xl border-t border-gray-100">
           <div className="px-4 pt-2 pb-6 space-y-2">
             {navLinks.map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase()}`}
-                className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => handleNavClick(e, item)}
+                className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl text-sm"
               >
                 {item}
               </a>
             ))}
-            {/* <a
-              href="#contact"
-              className="block px-3 py-2 text-white bg-red-600 rounded-lg text-center font-semibold"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sign Up
-            </a> */}
             {user ? (
               <>
                 <Link
                   to="/profile"
-                  className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
+                  className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl text-sm"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {user.name || "Profile"}
@@ -212,7 +225,7 @@ const SiteNavbar = () => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
-                  className="block w-full text-left px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
+                  className="block w-full text-left px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl text-sm"
                 >
                   Sign Out
                 </button>
@@ -221,7 +234,7 @@ const SiteNavbar = () => {
               <>
                 <Link
                   to="/signin"
-                  className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl"
+                  className="block px-3 py-3 text-gray-700 font-semibold uppercase tracking-[0.2em] hover:bg-blue-50 rounded-xl text-sm"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign In
@@ -229,7 +242,7 @@ const SiteNavbar = () => {
 
                 <Link
                   to="/signup"
-                  className="block px-3 py-3 text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl text-center font-semibold shadow-lg"
+                  className="block px-3 py-3 text-white bg-gradient-to-r from-red-600 to-red-700 rounded-xl text-center font-semibold shadow-lg text-sm"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Sign Up
@@ -245,10 +258,10 @@ const SiteNavbar = () => {
 
 // Feature Card Component
 const FeatureCard = ({ icon, title, desc }) => (
-  <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+  <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
     <div className="text-blue-600 mb-4">{icon}</div>
-    <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-    <p className="text-gray-600">{desc}</p>
+    <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-2">{title}</h3>
+    <p className="text-sm lg:text-base text-gray-600">{desc}</p>
   </div>
 );
 
@@ -259,39 +272,43 @@ const CourseCard = ({ course }) => (
       className={`absolute inset-0 bg-gradient-to-br ${course.color} opacity-0 group-hover:opacity-10 transition-opacity`}
     ></div>
 
-    <div className="p-8">
+    <div className="p-6 lg:p-8">
       <div
-        className={`inline-block px-4 py-2 bg-gradient-to-r ${course.color} text-white rounded-full text-sm font-semibold mb-4`}
+        className={`inline-block px-3 lg:px-4 py-1.5 lg:py-2 bg-gradient-to-r ${course.color} text-white rounded-full text-xs lg:text-sm font-semibold mb-4`}
       >
         {course.duration}
       </div>
 
-      <h3 className="text-2xl font-bold text-gray-900 mb-2">{course.title}</h3>
+      <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">
+        {course.title}
+      </h3>
       {course.subtitle && (
-        <p className="text-red-600 font-semibold mb-4">{course.subtitle}</p>
+        <p className="text-red-600 font-semibold mb-4 text-sm lg:text-base">
+          {course.subtitle}
+        </p>
       )}
 
-      <div className="space-y-3 mb-6">
-        <div className="flex items-center text-gray-600">
-          <Clock className="w-5 h-5 mr-2 text-blue-600" />
+      <div className="space-y-2 lg:space-y-3 mb-6">
+        <div className="flex items-center text-gray-600 text-sm lg:text-base">
+          <Clock className="w-4 h-4 lg:w-5 lg:h-5 mr-2 text-blue-600 flex-shrink-0" />
           <span>Duration: {course.duration}</span>
         </div>
-        <div className="flex items-center text-gray-600">
-          <Users className="w-5 h-5 mr-2 text-blue-600" />
+        <div className="flex items-center text-gray-600 text-sm lg:text-base">
+          <Users className="w-4 h-4 lg:w-5 lg:h-5 mr-2 text-blue-600 flex-shrink-0" />
           <span>Age: {course.age}</span>
         </div>
-        <div className="flex items-center text-gray-600">
-          <BookOpen className="w-5 h-5 mr-2 text-blue-600" />
+        <div className="flex items-center text-gray-600 text-sm lg:text-base">
+          <BookOpen className="w-4 h-4 lg:w-5 lg:h-5 mr-2 text-blue-600 flex-shrink-0" />
           <span>Eligibility: {course.eligibility}</span>
         </div>
-        <div className="flex items-center text-gray-600">
-          <Ship className="w-5 h-5 mr-2 text-blue-600" />
+        <div className="flex items-center text-gray-600 text-sm lg:text-base">
+          <Ship className="w-4 h-4 lg:w-5 lg:h-5 mr-2 text-blue-600 flex-shrink-0" />
           <span>Placement: {course.placement}</span>
         </div>
       </div>
 
       <button
-        className={`w-full bg-gradient-to-r ${course.color} text-white py-3 rounded-full font-semibold hover:scale-105 transform transition-all`}
+        className={`w-full bg-gradient-to-r ${course.color} text-white py-2.5 lg:py-3 rounded-full font-semibold hover:scale-105 transform transition-all text-sm lg:text-base`}
       >
         Apply Now
       </button>
@@ -302,11 +319,11 @@ const CourseCard = ({ course }) => (
 // Stat Card Component
 const StatCard = ({ icon, value, label, color }) => (
   <div
-    className={`bg-gradient-to-br ${color} p-6 rounded-2xl text-white shadow-xl`}
+    className={`bg-gradient-to-br ${color} p-4 lg:p-6 rounded-2xl text-white shadow-xl`}
   >
     {icon}
-    <div className="text-3xl font-bold mb-2">{value}</div>
-    <div className="text-sm">{label}</div>
+    <div className="text-2xl lg:text-3xl font-bold mb-2">{value}</div>
+    <div className="text-xs lg:text-sm">{label}</div>
   </div>
 );
 
@@ -344,32 +361,32 @@ const RoyalBritishSchool = () => {
 
   const features = [
     {
-      icon: <Award className="w-8 h-8" />,
+      icon: <Award className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "100% Placement",
       desc: "World class career opportunities",
     },
     {
-      icon: <BookOpen className="w-8 h-8" />,
+      icon: <BookOpen className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "Expert Faculty",
       desc: "Industry professionals",
     },
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "Global Network",
       desc: "40+ shipping companies",
     },
     {
-      icon: <Ship className="w-8 h-8" />,
+      icon: <Ship className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "Cruise Ship Jobs",
       desc: "International exposure",
     },
     {
-      icon: <Globe className="w-8 h-8" />,
+      icon: <Globe className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "Multicultural",
       desc: "Diverse work force",
     },
     {
-      icon: <Clock className="w-8 h-8" />,
+      icon: <Clock className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "Flexible Timing",
       desc: "90hrs online/offline",
     },
@@ -403,63 +420,86 @@ const RoyalBritishSchool = () => {
       {/* Hero Section */}
       <section
         id="home"
-        className="relative h-screen flex items-center justify-center overflow-hidden"
+        className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 lg:pt-0"
       >
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-red-900">
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-400 rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+            <div className="absolute top-0 left-0 w-64 h-64 lg:w-96 lg:h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 lg:w-96 lg:h-96 bg-red-400 rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
           </div>
         </div>
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
-          <div className="inline-flex items-center gap-3 px-5 py-2 mb-8 rounded-full bg-white/15 text-white/80 text-sm tracking-wide backdrop-blur">
-            <Clock className="w-5 h-5" />
-            Now enrolling for the July 2024 intake
-          </div>
-
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-12 text-center lg:text-left">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-12 lg:py-0">
+          <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-12 text-center lg:text-left">
             <div className="flex-1">
-              <p className="uppercase tracking-[0.3em] text-sm text-white/70 mb-4">
+              <p className="uppercase tracking-[0.2em] lg:tracking-[0.3em] text-xs lg:text-sm text-white/70 mb-3 lg:mb-4">
                 Royal British Culinary Academy
               </p>
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 lg:mb-6 leading-tight">
                 Shape Your Future in
                 <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500">
                   Hospitality Industry
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl">
+              <p className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-200 mb-6 lg:mb-10 max-w-2xl mx-auto lg:mx-0">
                 6 Months Professional Training • 100% Placement • International
                 Opportunities
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start">
                 <a
                   href="#courses"
-                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-10 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl hover:shadow-red-500/50"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const target = document.getElementById("courses");
+                    if (target) {
+                      const navbarHeight = 100;
+                      const elementPosition =
+                        target.getBoundingClientRect().top + window.pageYOffset;
+                      const offsetPosition = elementPosition - navbarHeight;
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                  className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 lg:px-10 py-3 lg:py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl hover:shadow-red-500/50 text-sm lg:text-base"
                 >
                   Explore Courses
                 </a>
                 <a
                   href="#contact"
-                  className="bg-white/90 text-blue-900 px-10 py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const target = document.getElementById("contact");
+                    if (target) {
+                      const navbarHeight = 100;
+                      const elementPosition =
+                        target.getBoundingClientRect().top + window.pageYOffset;
+                      const offsetPosition = elementPosition - navbarHeight;
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth",
+                      });
+                    }
+                  }}
+                  className="bg-white/90 text-blue-900 px-8 lg:px-10 py-3 lg:py-4 rounded-full font-semibold hover:scale-105 transform transition-all shadow-2xl text-sm lg:text-base"
                 >
                   Apply Now
                 </a>
               </div>
 
-              <div className="mt-12 flex flex-wrap justify-center lg:justify-start gap-8 text-white">
+              <div className="mt-8 lg:mt-12 flex flex-wrap justify-center lg:justify-start gap-6 lg:gap-8 text-white">
                 {[
                   { value: "10%", label: "Discount Offer" },
                   { value: "100%", label: "Placement" },
                   { value: "40+", label: "Companies" },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center">
-                    <div className="text-4xl font-bold text-yellow-300">
+                    <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-yellow-300">
                       {stat.value}
                     </div>
-                    <div className="text-sm tracking-wide text-white/80">
+                    <div className="text-xs lg:text-sm tracking-wide text-white/80">
                       {stat.label}
                     </div>
                   </div>
@@ -468,9 +508,9 @@ const RoyalBritishSchool = () => {
             </div>
 
             <div className="flex-1 max-w-md w-full">
-              <div className="relative bg-white/10 backdrop-blur-xl p-1 rounded-[32px] border border-white/30 shadow-2xl">
-                <div className="bg-white rounded-[28px] p-8 text-gray-900 space-y-6">
-                  <div className="w-48 h-48 mx-auto rounded-3xl border-4 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden">
+              <div className="relative bg-white/10 backdrop-blur-xl p-1 rounded-[24px] lg:rounded-[32px] border border-white/30 shadow-2xl">
+                <div className="bg-white rounded-[20px] lg:rounded-[28px] p-6 lg:p-8 text-gray-900 space-y-4 lg:space-y-6">
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 mx-auto rounded-2xl lg:rounded-3xl border-2 lg:border-4 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden">
                     <img
                       src={logo}
                       alt="Royal British logo"
@@ -478,33 +518,39 @@ const RoyalBritishSchool = () => {
                     />
                   </div>
                   <div className="text-center space-y-2">
-                    <p className="text-sm uppercase tracking-[0.4em] text-gray-500">
+                    <p className="text-xs lg:text-sm uppercase tracking-[0.3em] lg:tracking-[0.4em] text-gray-500">
                       Est. 2009
                     </p>
-                    <p className="text-2xl font-bold text-blue-900">
+                    <p className="text-lg lg:text-2xl font-bold text-blue-900">
                       Trusted by aspiring chefs worldwide
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-gray-500 text-xs lg:text-sm">
                       Book a campus tour to experience our state-of-the-art
                       kitchens
                     </p>
                   </div>
-                  <div className="grid grid-cols-3 gap-4 text-center text-sm">
+                  <div className="grid grid-cols-3 gap-3 lg:gap-4 text-center text-xs lg:text-sm">
                     <div>
-                      <p className="text-2xl font-bold text-blue-900">15+</p>
+                      <p className="text-xl lg:text-2xl font-bold text-blue-900">
+                        15+
+                      </p>
                       <p className="text-gray-500">Years Legacy</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-blue-900">6K</p>
+                      <p className="text-xl lg:text-2xl font-bold text-blue-900">
+                        6K
+                      </p>
                       <p className="text-gray-500">Alumni</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-blue-900">24x7</p>
+                      <p className="text-xl lg:text-2xl font-bold text-blue-900">
+                        24x7
+                      </p>
                       <p className="text-gray-500">Support</p>
                     </div>
                   </div>
                 </div>
-                <div className="absolute -top-5 -right-5 bg-gradient-to-r from-yellow-400 to-red-400 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg uppercase tracking-wide">
+                <div className="absolute -top-3 lg:-top-5 -right-3 lg:-right-5 bg-gradient-to-r from-yellow-400 to-red-400 text-white text-xs font-semibold px-3 lg:px-4 py-1.5 lg:py-2 rounded-full shadow-lg uppercase tracking-wide">
                   Premium Campus
                 </div>
               </div>
@@ -512,15 +558,15 @@ const RoyalBritishSchool = () => {
           </div>
         </div>
 
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <ChevronDown className="w-8 h-8 text-white" />
+        <div className="absolute bottom-4 lg:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <ChevronDown className="w-6 h-6 lg:w-8 lg:h-8 text-white" />
         </div>
       </section>
 
       {/* Special Offers Banner */}
-      <div className="bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 text-white py-4">
+      <div className="bg-gradient-to-r from-yellow-400 via-red-500 to-yellow-400 text-white py-3 lg:py-4">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-lg font-bold animate-pulse">
+          <p className="text-sm lg:text-lg font-bold animate-pulse">
             🎉 Limited Time Offer: 10% OFF on Institution Fee + 10% Discount on
             Check-in! 🎉
           </p>
@@ -528,16 +574,16 @@ const RoyalBritishSchool = () => {
       </div>
 
       {/* Features Grid */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-12 lg:py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-10 lg:mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Why Choose Us
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto"></div>
+            <div className="w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto"></div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {features.map((feature, idx) => (
               <FeatureCard key={idx} {...feature} />
             ))}
@@ -545,21 +591,21 @@ const RoyalBritishSchool = () => {
         </div>
       </section>
 
-      {/* Courses Section */}
-      <section id="courses" className="py-20 bg-white">
+      {/* Courses Section - Add scroll padding */}
+      <section id="courses" className="py-12 lg:py-20 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-10 lg:mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Courses Offered
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto mb-4"></div>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <div className="w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto mb-4"></div>
+            <p className="text-sm lg:text-base text-gray-600 max-w-2xl mx-auto">
               Professional programs designed to launch your career in the
               hospitality industry
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {courses.map((course, idx) => (
               <CourseCard key={idx} course={course} />
             ))}
@@ -570,41 +616,47 @@ const RoyalBritishSchool = () => {
       {/* Facilities Section */}
       <section
         id="facilities"
-        className="py-20 bg-gradient-to-br from-blue-50 to-red-50"
+        className="py-12 lg:py-20 bg-gradient-to-br from-blue-50 to-red-50 scroll-mt-24"
       >
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-10 lg:mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
               Student Facilities
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto"></div>
+            <div className="w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mx-auto"></div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div className="bg-white p-8 rounded-2xl shadow-xl">
-              <h3 className="text-2xl font-bold text-blue-900 mb-6 flex items-center">
-                <Award className="w-8 h-8 mr-3 text-blue-600" />
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 mb-8 lg:mb-12">
+            <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-xl">
+              <h3 className="text-xl lg:text-2xl font-bold text-blue-900 mb-4 lg:mb-6 flex items-center">
+                <Award className="w-6 h-6 lg:w-8 lg:h-8 mr-3 text-blue-600 flex-shrink-0" />
                 STCW Class (21 Days)
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2 lg:space-y-3">
                 {benefits.slice(0, 5).map((benefit, idx) => (
-                  <li key={idx} className="flex items-center text-gray-700">
-                    <CheckCircle className="w-5 h-5 mr-3 text-green-600" />
+                  <li
+                    key={idx}
+                    className="flex items-center text-sm lg:text-base text-gray-700"
+                  >
+                    <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 mr-3 text-green-600 flex-shrink-0" />
                     {benefit}
                   </li>
                 ))}
               </ul>
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-xl">
-              <h3 className="text-2xl font-bold text-blue-900 mb-6 flex items-center">
-                <BookOpen className="w-8 h-8 mr-3 text-blue-600" />
+            <div className="bg-white p-6 lg:p-8 rounded-2xl shadow-xl">
+              <h3 className="text-xl lg:text-2xl font-bold text-blue-900 mb-4 lg:mb-6 flex items-center">
+                <BookOpen className="w-6 h-6 lg:w-8 lg:h-8 mr-3 text-blue-600 flex-shrink-0" />
                 Study Rooms (90 Days)
               </h3>
-              <ul className="space-y-3">
+              <ul className="space-y-2 lg:space-y-3">
                 {benefits.slice(5).map((benefit, idx) => (
-                  <li key={idx} className="flex items-center text-gray-700">
-                    <CheckCircle className="w-5 h-5 mr-3 text-green-600" />
+                  <li
+                    key={idx}
+                    className="flex items-center text-sm lg:text-base text-gray-700"
+                  >
+                    <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 mr-3 text-green-600 flex-shrink-0" />
                     {benefit}
                   </li>
                 ))}
@@ -612,15 +664,18 @@ const RoyalBritishSchool = () => {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-blue-900 to-red-900 p-8 rounded-2xl shadow-xl text-white">
-            <h3 className="text-2xl font-bold mb-6 flex items-center">
-              <Ship className="w-8 h-8 mr-3" />
+          <div className="bg-gradient-to-r from-blue-900 to-red-900 p-6 lg:p-8 rounded-2xl shadow-xl text-white">
+            <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6 flex items-center">
+              <Ship className="w-6 h-6 lg:w-8 lg:h-8 mr-3 flex-shrink-0" />
               Contract Period - Permanent Contract
             </h3>
-            <ul className="grid md:grid-cols-2 gap-4">
+            <ul className="grid sm:grid-cols-2 gap-3 lg:gap-4">
               {requirements.map((req, idx) => (
-                <li key={idx} className="flex items-center">
-                  <CheckCircle className="w-5 h-5 mr-3 text-yellow-400" />
+                <li
+                  key={idx}
+                  className="flex items-center text-sm lg:text-base"
+                >
+                  <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5 mr-3 text-yellow-400 flex-shrink-0" />
                   {req}
                 </li>
               ))}
@@ -630,64 +685,64 @@ const RoyalBritishSchool = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-white">
+      <section id="about" className="py-12 lg:py-20 bg-white scroll-mt-24">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 lg:mb-6">
                 Our Promise
               </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mb-6"></div>
-              <p className="text-lg text-gray-700 mb-6">
+              <div className="w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mb-4 lg:mb-6"></div>
+              <p className="text-base lg:text-lg text-gray-700 mb-4 lg:mb-6">
                 The Royal British International School training leads by doing
                 the right things in the right way. We enable everyone to perform
                 at their best while challenging ourselves to responsibly shape
                 the industry and make a positive impact in our communities.
               </p>
-              <p className="text-lg text-gray-700 mb-8">
+              <p className="text-base lg:text-lg text-gray-700 mb-6 lg:mb-8">
                 We value diversity and provide an inclusive environment for our
                 people, regardless of their race, ethnicity, nationality,
                 gender, age, sexual orientation, faith or political beliefs.
               </p>
 
-              <div className="space-y-4">
+              <div className="space-y-3 lg:space-y-4">
                 {[
                   "Expert Lecturers & Industry Exposure",
                   "Line Training & Placements",
                   "Student Success & Future Development",
                 ].map((text, idx) => (
                   <div key={idx} className="flex items-start">
-                    <Star className="w-6 h-6 mr-3 text-yellow-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-700">{text}</p>
+                    <Star className="w-5 h-5 lg:w-6 lg:h-6 mr-3 text-yellow-500 flex-shrink-0 mt-1" />
+                    <p className="text-sm lg:text-base text-gray-700">{text}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 lg:gap-4">
               <StatCard
-                icon={<Globe className="w-12 h-12 mb-4" />}
+                icon={<Globe className="w-8 h-8 lg:w-12 lg:h-12 mb-4" />}
                 value="40+"
                 label="Shipping Companies"
                 color="from-blue-600 to-blue-800"
               />
-              <div className="mt-8">
+              <div className="mt-6 lg:mt-8">
                 <StatCard
-                  icon={<Users className="w-12 h-12 mb-4" />}
+                  icon={<Users className="w-8 h-8 lg:w-12 lg:h-12 mb-4" />}
                   value="5"
                   label="Countries Network"
                   color="from-red-600 to-red-800"
                 />
               </div>
               <StatCard
-                icon={<Award className="w-12 h-12 mb-4" />}
+                icon={<Award className="w-8 h-8 lg:w-12 lg:h-12 mb-4" />}
                 value="100%"
                 label="Placement Rate"
                 color="from-blue-800 to-blue-900"
               />
-              <div className="mt-8">
+              <div className="mt-6 lg:mt-8">
                 <StatCard
-                  icon={<BookOpen className="w-12 h-12 mb-4" />}
+                  icon={<BookOpen className="w-8 h-8 lg:w-12 lg:h-12 mb-4" />}
                   value="World"
                   label="Class Faculty"
                   color="from-red-800 to-red-900"
@@ -701,82 +756,91 @@ const RoyalBritishSchool = () => {
       {/* Contact Section */}
       <section
         id="contact"
-        className="py-20 bg-gradient-to-br from-blue-900 to-red-900 text-white"
+        className="py-12 lg:py-20 bg-gradient-to-br from-blue-900 to-red-900 text-white scroll-mt-24"
       >
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Get In Touch</h2>
-            <div className="w-24 h-1 bg-white mx-auto mb-4"></div>
-            <p className="text-gray-200 max-w-2xl mx-auto">
+          <div className="text-center mb-10 lg:mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Get In Touch
+            </h2>
+            <div className="w-20 lg:w-24 h-1 bg-white mx-auto mb-4"></div>
+            <p className="text-sm lg:text-base text-gray-200 max-w-2xl mx-auto">
               Ready to start your journey? Contact us today for more information
               or to schedule a visit
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="space-y-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+            <div className="space-y-6 lg:space-y-8">
               {[
                 {
-                  icon: <Phone className="w-6 h-6" />,
+                  icon: <Phone className="w-5 h-5 lg:w-6 lg:h-6" />,
                   title: "Phone",
                   text: "833 1086 333",
                 },
                 {
-                  icon: <Mail className="w-6 h-6" />,
+                  icon: <Mail className="w-5 h-5 lg:w-6 lg:h-6" />,
                   title: "Email",
                   text: "enquiry@royalbritish.com",
                 },
                 {
-                  icon: <MapPin className="w-6 h-6" />,
+                  icon: <MapPin className="w-5 h-5 lg:w-6 lg:h-6" />,
                   title: "Address",
                   text: "Plot No. Rm Trinity Art, Visakalakshi Nagar\nVetrinary Colony, Visakhapatnam - 530040\nA.P. India",
                 },
               ].map((item, idx) => (
-                <div key={idx} className="flex items-start space-x-4">
-                  <div className="bg-white/10 p-4 rounded-full">
+                <div
+                  key={idx}
+                  className="flex items-start space-x-3 lg:space-x-4"
+                >
+                  <div className="bg-white/10 p-3 lg:p-4 rounded-full flex-shrink-0">
                     {item.icon}
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-2">{item.title}</h3>
-                    <p className="text-gray-200 whitespace-pre-line">
+                    <h3 className="font-semibold mb-2 text-sm lg:text-base">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm lg:text-base text-gray-200 whitespace-pre-line">
                       {item.text}
                     </p>
                   </div>
                 </div>
               ))}
 
-              <div className="flex space-x-4">
+              <div className="flex space-x-3 lg:space-x-4">
                 {[Facebook, Instagram, Linkedin].map((Icon, idx) => (
                   <a
                     key={idx}
                     href="#"
-                    className="bg-white/10 p-3 rounded-full hover:bg-white/20 transition-colors"
+                    className="bg-white/10 p-2.5 lg:p-3 rounded-full hover:bg-white/20 transition-colors"
                   >
-                    <Icon className="w-6 h-6" />
+                    <Icon className="w-5 h-5 lg:w-6 lg:h-6" />
                   </a>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl">
-              <h3 className="text-2xl font-bold mb-6">Application Form</h3>
-              <form className="space-y-4">
+            <div className="bg-white/10 backdrop-blur-lg p-6 lg:p-8 rounded-2xl">
+              <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6">
+                Application Form
+              </h3>
+              <form className="space-y-3 lg:space-y-4">
                 <input
                   type="text"
                   placeholder="Full Name"
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40"
+                  className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 />
                 <input
                   type="email"
                   placeholder="Email Address"
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40"
+                  className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 />
                 <input
                   type="tel"
                   placeholder="Mobile Number"
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40"
+                  className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 />
-                <select className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40">
+                <select className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:border-white/40 text-sm lg:text-base">
                   <option value="" className="bg-blue-900">
                     Select Course
                   </option>
@@ -793,11 +857,11 @@ const RoyalBritishSchool = () => {
                 <textarea
                   placeholder="Message (Optional)"
                   rows="4"
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40"
+                  className="w-full px-4 py-2.5 lg:py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-gray-300 focus:outline-none focus:border-white/40 text-sm lg:text-base"
                 ></textarea>
                 <button
                   type="submit"
-                  className="w-full bg-white text-blue-900 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                  className="w-full bg-white text-blue-900 py-2.5 lg:py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-sm lg:text-base"
                 >
                   Submit Application
                 </button>
@@ -808,19 +872,23 @@ const RoyalBritishSchool = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-gray-900 text-white py-8 lg:py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-6 lg:mb-8">
             <div>
-              <h4 className="font-bold text-xl mb-4">Royal British</h4>
-              <p className="text-gray-400">
+              <h4 className="font-bold text-lg lg:text-xl mb-3 lg:mb-4">
+                Royal British
+              </h4>
+              <p className="text-sm lg:text-base text-gray-400">
                 Building trust, driving performance, and shaping a better
                 future.
               </p>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Vision & Values</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-bold mb-3 lg:mb-4 text-sm lg:text-base">
+                Vision & Values
+              </h4>
+              <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm text-gray-400">
                 {[
                   "Be Kind",
                   "Be Respectful",
@@ -833,8 +901,10 @@ const RoyalBritishSchool = () => {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-400">
+              <h4 className="font-bold mb-3 lg:mb-4 text-sm lg:text-base">
+                Quick Links
+              </h4>
+              <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm text-gray-400">
                 {["Courses", "About Us", "Facilities", "Contact"].map(
                   (link, idx) => (
                     <li key={idx}>
@@ -850,21 +920,23 @@ const RoyalBritishSchool = () => {
               </ul>
             </div>
             <div>
-              <h4 className="font-bold mb-4">Leave a Review</h4>
-              <div className="flex space-x-1 mb-4">
+              <h4 className="font-bold mb-3 lg:mb-4 text-sm lg:text-base">
+                Leave a Review
+              </h4>
+              <div className="flex space-x-1 mb-3 lg:mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-6 h-6 text-yellow-400 fill-current"
+                    className="w-5 h-5 lg:w-6 lg:h-6 text-yellow-400 fill-current"
                   />
                 ))}
               </div>
-              <p className="text-gray-400 text-sm">
+              <p className="text-gray-400 text-xs lg:text-sm">
                 Share your experience with us!
               </p>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+          <div className="border-t border-gray-800 pt-6 lg:pt-8 text-center text-gray-400 text-xs lg:text-sm">
             <p>
               &copy; 2024 Royal British International School. A unit of Royal
               British Private Limited.
