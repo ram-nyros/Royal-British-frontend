@@ -20,7 +20,7 @@ export const authApiSlice = rootApiSlice.injectEndpoints({
     }),
     submitApplication: builder.mutation({
       query: (data) => ({
-        url: "/applications",
+        url: "/api/applications",
         method: "POST",
         body: data,
       }),
