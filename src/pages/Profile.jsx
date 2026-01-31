@@ -16,9 +16,7 @@ import {
   useUploadProfileImageMutation,
   useUploadCertificateMutation,
   useDeleteFileMutation,
-  getFileUrl,
 } from "../features/auth/authApiSlice";
-import { API_BASE_URL } from "../config/apiBaseUrl";
 
 const CERTIFICATE_TYPES = [
   {
@@ -176,11 +174,40 @@ const Profile = () => {
     [updateProfile, formData, dispatch, refetch],
   );
 
-  // View file in new tab
-  const viewFile = useCallback((type, fileId) => {
-    const url = getFileUrl(API_BASE_URL, type, fileId);
-    window.open(url, "_blank");
-  }, []);
+  // View file in new tab using dataUrl
+  const viewFile = useCallback(
+    (type, fileId) => {
+      let dataUrl = null;
+
+      if (type === "profileImage") {
+        dataUrl = profile?.profileImage?.dataUrl;
+      } else if (type === "other" && fileId) {
+        const doc = profile?.certificates?.otherDocuments?.find(
+          (d) => d._id === fileId,
+        );
+        dataUrl = doc?.dataUrl;
+      } else if (profile?.certificates?.[type]) {
+        dataUrl = profile.certificates[type].dataUrl;
+      }
+
+      if (dataUrl) {
+        const newWindow = window.open();
+        if (newWindow) {
+          newWindow.document.write(
+            `<html><head><title>Document Viewer</title></head><body style="margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;background:#f0f0f0;">` +
+              (dataUrl.startsWith("data:image")
+                ? `<img src="${dataUrl}" style="max-width:100%;max-height:100vh;object-fit:contain;" />`
+                : `<iframe src="${dataUrl}" style="width:100%;height:100vh;border:none;"></iframe>`) +
+              `</body></html>`,
+          );
+          newWindow.document.close();
+        }
+      } else {
+        alert("File not found");
+      }
+    },
+    [profile],
+  );
 
   // Format file size
   const formatFileSize = (bytes) => {
@@ -220,9 +247,9 @@ const Profile = () => {
             <div className="flex items-center gap-6 mb-6">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
-                  {profile?.profileImage ? (
+                  {profile?.profileImage?.dataUrl ? (
                     <img
-                      src={getFileUrl(API_BASE_URL, "profileImage")}
+                      src={profile.profileImage.dataUrl}
                       alt="Profile"
                       className="w-full h-full object-cover"
                     />
@@ -251,16 +278,55 @@ const Profile = () => {
                   className="hidden"
                 />
               </div>
-              <div>
-                <h2 className="text-xl font-bold text-gray-800">
-                  {profile?.name}
+
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {profile?.name || "User"}
                 </h2>
                 <p className="text-gray-500">{profile?.email}</p>
+                <span className="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full capitalize">
+                  {profile?.role || "user"}
+                </span>
               </div>
             </div>
 
-            {/* Profile Form */}
-            {editMode ? (
+            {/* Profile Details */}
+            {!editMode ? (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-gray-500">Name</label>
+                    <p className="font-medium">{profile?.name || "-"}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-500">Phone</label>
+                    <p className="font-medium">{profile?.phone || "-"}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="text-sm text-gray-500">Address</label>
+                    <p className="font-medium">
+                      {profile?.address
+                        ? [
+                            profile.address.street,
+                            profile.address.city,
+                            profile.address.state,
+                            profile.address.zipCode,
+                            profile.address.country,
+                          ]
+                            .filter(Boolean)
+                            .join(", ") || "-"
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setEditMode(true)}
+                  className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Edit Profile
+                </button>
+              </div>
+            ) : (
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -288,7 +354,7 @@ const Profile = () => {
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Street
@@ -365,68 +431,50 @@ const Profile = () => {
                       className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.address.country}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          address: {
+                            ...formData.address,
+                            country: e.target.value,
+                          },
+                        })
+                      }
+                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Country
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.address.country}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        address: {
-                          ...formData.address,
-                          country: e.target.value,
-                        },
-                      })
-                    }
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   <button
                     type="submit"
                     disabled={isUpdatingProfile}
                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                   >
-                    {isUpdatingProfile ? "Saving..." : "Save Changes"}
+                    {isUpdatingProfile ? (
+                      <>
+                        <FaSpinner className="inline animate-spin mr-2" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
                   </button>
                   <button
                     type="button"
                     onClick={() => setEditMode(false)}
-                    className="px-6 py-2 border rounded-lg hover:bg-gray-50"
+                    className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                   >
                     Cancel
                   </button>
                 </div>
               </form>
-            ) : (
-              <div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Phone</p>
-                    <p className="font-medium">
-                      {profile?.phone || "Not provided"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Address</p>
-                    <p className="font-medium">
-                      {profile?.address?.city
-                        ? `${profile.address.street || ""}, ${profile.address.city}, ${profile.address.state || ""} ${profile.address.zipCode || ""}`
-                        : "Not provided"}
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setEditMode(true)}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Edit Profile
-                </button>
-              </div>
             )}
           </div>
         </div>
@@ -434,13 +482,13 @@ const Profile = () => {
         {/* Certificates Section */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="p-6">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Certificates & Documents
             </h3>
 
             <div className="space-y-4">
               {CERTIFICATE_TYPES.map((cert) => {
-                const certificate = profile?.certificates?.[cert.key];
+                const certData = profile?.certificates?.[cert.key];
                 const isUploading = uploading[cert.key];
 
                 return (
@@ -454,29 +502,29 @@ const Profile = () => {
                           {cert.description}
                         </p>
                       </div>
-                      {certificate && (
-                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                      {certData && (
+                        <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
                           Uploaded
                         </span>
                       )}
                     </div>
 
-                    {certificate ? (
+                    {certData ? (
                       <div className="mt-3 flex items-center justify-between bg-gray-50 rounded-lg p-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
                             <span className="text-blue-600 text-xs font-semibold">
-                              {certificate.mimeType?.includes("pdf")
+                              {certData.mimeType?.includes("pdf")
                                 ? "PDF"
                                 : "IMG"}
                             </span>
                           </div>
                           <div>
                             <p className="text-sm font-medium truncate max-w-[200px]">
-                              {certificate.originalName}
+                              {certData.originalName}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {formatFileSize(certificate.size)}
+                              {formatFileSize(certData.size)}
                             </p>
                           </div>
                         </div>
@@ -494,11 +542,7 @@ const Profile = () => {
                             className="p-2 text-red-600 hover:bg-red-100 rounded disabled:opacity-50"
                             title="Delete"
                           >
-                            {isUploading ? (
-                              <FaSpinner className="animate-spin" />
-                            ) : (
-                              <FaTrash />
-                            )}
+                            <FaTrash />
                           </button>
                         </div>
                       </div>
