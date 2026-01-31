@@ -329,6 +329,8 @@ const StatCard = ({ icon, value, label, color }) => (
 
 // Main Component
 const RoyalBritishSchool = () => {
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
   const [submitApplication, { isLoading: isSubmitting }] =
     useSubmitApplicationMutation();
   const [applicationForm, setApplicationForm] = useState({
@@ -343,6 +345,14 @@ const RoyalBritishSchool = () => {
   const handleApplicationSubmit = async (e) => {
     e.preventDefault();
     setFormMessage({ type: "", text: "" });
+
+    if (!user) {
+      setFormMessage({
+        type: "error",
+        text: "Please login to submit the application form",
+      });
+      return;
+    }
 
     console.log("[Home] Submitting application:", applicationForm);
 
@@ -877,6 +887,20 @@ const RoyalBritishSchool = () => {
               <h3 className="text-xl lg:text-2xl font-bold mb-4 lg:mb-6">
                 Application Form
               </h3>
+              {!user && (
+                <div className="mb-4 p-4 rounded-lg bg-yellow-500/20 text-yellow-200 border border-yellow-500/30 text-sm">
+                  <p className="font-medium">
+                    Please login to submit your application
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/signin")}
+                    className="mt-2 text-yellow-100 underline hover:text-white"
+                  >
+                    Click here to login
+                  </button>
+                </div>
+              )}
               {formMessage.text && (
                 <div
                   className={`mb-4 p-3 rounded-lg text-sm ${
