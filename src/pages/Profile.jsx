@@ -763,13 +763,6 @@ const Profile = () => {
                                 {/* Actions */}
                                 <div className="mt-3 flex items-center gap-2">
                                   <button
-                                    onClick={() => viewFile(cert.key)}
-                                    className="flex-1 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors text-xs font-medium flex items-center justify-center gap-1"
-                                  >
-                                    <FaEye />
-                                    View
-                                  </button>
-                                  <button
                                     onClick={() => handleDeleteFile(cert.key)}
                                     className="flex-1 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors text-xs font-medium flex items-center justify-center gap-1"
                                   >
