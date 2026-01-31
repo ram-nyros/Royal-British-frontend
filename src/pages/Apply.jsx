@@ -1,7 +1,9 @@
 import { useState } from "react";
-import api from "../services/api";
+import { useSubmitApplicationMutation } from "../features/auth/authApiSlice";
 
 const Apply = () => {
+  const [submitApplication, { isLoading }] = useSubmitApplicationMutation();
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -11,8 +13,12 @@ const Apply = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    await api.post("/applications", form);
-    alert("Application submitted");
+    try {
+      await submitApplication(form).unwrap();
+      alert("Application submitted");
+    } catch (error) {
+      alert(error?.data?.message || "Failed to submit application");
+    }
   };
 
   return (
@@ -37,7 +43,9 @@ const Apply = () => {
         <option>International Diploma</option>
       </select>
 
-      <button type="submit">Apply Now</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Submitting..." : "Apply Now"}
+      </button>
     </form>
   );
 };

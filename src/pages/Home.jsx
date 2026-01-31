@@ -21,7 +21,6 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout as logoutAction } from "../features/auth/authSlice";
-import api from "../services/api";
 
 // Mock logo - replace with your actual logo import
 import logo from "../assets/home-screen.png";
@@ -58,7 +57,7 @@ const SiteNavbar = () => {
   const { user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    api.auth.logout();
+    localStorage.removeItem("auth_token");
     dispatch(logoutAction());
     navigate("/");
   };

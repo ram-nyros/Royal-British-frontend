@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout as logoutAction } from "../features/auth/authSlice";
-import api from "../services/api";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -9,7 +8,7 @@ const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
 
   const handleLogout = () => {
-    api.auth.logout();
+    localStorage.removeItem("auth_token");
     dispatch(logoutAction());
     navigate("/");
   };
