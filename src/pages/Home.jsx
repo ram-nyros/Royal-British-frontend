@@ -100,7 +100,7 @@ const SiteNavbar = () => {
         <div className="flex justify-between items-center py-3 md:py-4">
           {/* Logo Section - Responsive sizing */}
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center bg-white rounded-xl sm:rounded-2xl shadow-xl overflow-hidden border-2 sm:border-4 border-white/70 ring-2 ring-red-500/20">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center bg-white rounded-xl shadow-xl overflow-hidden border-2 border-white/70 ring-2 ring-red-500/20">
               <img
                 src={logo}
                 alt="Royal British"
@@ -113,14 +113,14 @@ const SiteNavbar = () => {
                   scrolled ? "text-blue-900" : "text-white"
                 }`}
               >
-                Royal <span className="text-red-600">British</span>
+                ROYAL <span className="text-red-600">BRITISH</span>
               </h1>
               <p
                 className={`text-xs sm:text-sm md:text-base transition-colors hidden sm:block ${
                   scrolled ? "text-gray-600" : "text-gray-100"
                 }`}
               >
-                International School of Culinary Arts
+                International School of Bakery & Pastry
               </p>
             </div>
           </div>
@@ -394,7 +394,7 @@ const RoyalBritishSchool = () => {
 
   const courses = [
     {
-      title: "Bakery & Pastry International DHM",
+      title: "BAKERY & PASTRY International DHM",
       subtitle: "(CRASH COURSE)",
       duration: "6 Months",
       age: "20 - 28",
@@ -403,7 +403,7 @@ const RoyalBritishSchool = () => {
       color: "from-blue-600 to-blue-800",
     },
     {
-      title: "Bakery & Pastry International Diploma",
+      title: "BAKERY & PASTRY International Diploma",
       subtitle: "",
       duration: "6 Months",
       age: "21 - 28",
@@ -412,13 +412,24 @@ const RoyalBritishSchool = () => {
       color: "from-red-600 to-red-800",
     },
     {
-      title: "Diploma in Bakery & Pastry",
+      title: "Diploma in BAKERY & PASTRY",
       subtitle: "",
       duration: "3 Months",
       age: "18 - Unlimited",
       eligibility: "12th & above",
       placement: "Various Opportunities",
       color: "from-blue-800 to-blue-900",
+    },
+
+    // ✅ NEW CARD
+    {
+      title: "Women Special Bakery Course",
+      subtitle: "(For Women Only)",
+      duration: "42 Days",
+      age: "18 - Unlimited",
+      eligibility: "No Minimum Qualification",
+      placement: "Self Employment / Jobs",
+      color: "from-pink-600 to-pink-800",
     },
   ];
 
@@ -436,7 +447,7 @@ const RoyalBritishSchool = () => {
     {
       icon: <Users className="w-6 h-6 lg:w-8 lg:h-8" />,
       title: "Global Network",
-      desc: "40+ shipping companies",
+      desc: "100+ shipping companies",
     },
     {
       icon: <Ship className="w-6 h-6 lg:w-8 lg:h-8" />,
@@ -496,7 +507,7 @@ const RoyalBritishSchool = () => {
           <div className="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-12 text-center lg:text-left">
             <div className="flex-1">
               <p className="uppercase tracking-[0.2em] lg:tracking-[0.3em] text-xs lg:text-sm text-white/70 mb-3 lg:mb-4">
-                Royal British Culinary Academy
+                ROYAL BRITISH Culinary Academy
               </p>
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 lg:mb-6 leading-tight">
                 Shape Your Future in
@@ -573,7 +584,7 @@ const RoyalBritishSchool = () => {
             <div className="flex-1 max-w-md w-full">
               <div className="relative bg-white/10 backdrop-blur-xl p-1 rounded-[24px] lg:rounded-[32px] border border-white/30 shadow-2xl">
                 <div className="bg-white rounded-[20px] lg:rounded-[28px] p-6 lg:p-8 text-gray-900 space-y-4 lg:space-y-6">
-                  <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 mx-auto rounded-2xl lg:rounded-3xl border-2 lg:border-4 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 mx-auto rounded-2xl border-2 border-blue-100 shadow-inner flex items-center justify-center overflow-hidden">
                     <img
                       src={logo}
                       alt="Royal British logo"
@@ -732,7 +743,7 @@ const RoyalBritishSchool = () => {
               <Ship className="w-6 h-6 lg:w-8 lg:h-8 mr-3 flex-shrink-0" />
               Contract Period - Permanent Contract
             </h3>
-            <ul className="grid sm:grid-cols-2 gap-3 lg:gap-4">
+            {/* <ul className="grid sm:grid-cols-2 gap-3 lg:gap-4">
               {requirements.map((req, idx) => (
                 <li
                   key={idx}
@@ -742,7 +753,7 @@ const RoyalBritishSchool = () => {
                   {req}
                 </li>
               ))}
-            </ul>
+            </ul> */}
           </div>
         </div>
       </section>
@@ -757,7 +768,7 @@ const RoyalBritishSchool = () => {
               </h2>
               <div className="w-20 lg:w-24 h-1 bg-gradient-to-r from-blue-600 to-red-600 mb-4 lg:mb-6"></div>
               <p className="text-base lg:text-lg text-gray-700 mb-4 lg:mb-6">
-                The Royal British International School training leads by doing
+                The ROYAL BRITISH International School training leads by doing
                 the right things in the right way. We enable everyone to perform
                 at their best while challenging ourselves to responsibly shape
                 the industry and make a positive impact in our communities.
@@ -983,6 +994,12 @@ const RoyalBritishSchool = () => {
                   >
                     Diploma in Bakery & Pastry
                   </option>
+                  <option
+                    value="Diploma in Bakery & Pastry"
+                    className="bg-blue-900"
+                  >
+                    42 Days DHM "Womens"
+                  </option>
                 </select>
                 <textarea
                   placeholder="Message (Optional)"
@@ -1015,9 +1032,9 @@ const RoyalBritishSchool = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-6 lg:mb-8">
             <div>
               <h4 className="font-bold text-lg lg:text-xl mb-3 lg:mb-4">
-                Royal British
+                ROYAL BRITISH
               </h4>
-              <p className="text-sm lg:text-base text-gray-400">
+              <p className="text-sm lg:text-base text-white">
                 Building trust, driving performance, and shaping a better
                 future.
               </p>
@@ -1026,7 +1043,7 @@ const RoyalBritishSchool = () => {
               <h4 className="font-bold mb-3 lg:mb-4 text-sm lg:text-base">
                 Vision & Values
               </h4>
-              <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm text-gray-400">
+              <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm text-white">
                 {[
                   "Be Kind",
                   "Be Respectful",
@@ -1042,7 +1059,7 @@ const RoyalBritishSchool = () => {
               <h4 className="font-bold mb-3 lg:mb-4 text-sm lg:text-base">
                 Quick Links
               </h4>
-              <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm text-gray-400">
+              <ul className="space-y-1.5 lg:space-y-2 text-xs lg:text-sm text-white">
                 {["Courses", "About Us", "Facilities", "Contact"].map(
                   (link, idx) => (
                     <li key={idx}>
@@ -1069,15 +1086,15 @@ const RoyalBritishSchool = () => {
                   />
                 ))}
               </div>
-              <p className="text-gray-400 text-xs lg:text-sm">
+              <p className="text-white text-xs lg:text-sm">
                 Share your experience with us!
               </p>
             </div>
           </div>
-          <div className="border-t border-gray-800 pt-6 lg:pt-8 text-center text-gray-400 text-xs lg:text-sm">
+          <div className="border-t border-gray-800 pt-6 lg:pt-8 text-center text-white text-xs lg:text-sm">
             <p>
-              &copy; 2024 Royal British International School. A unit of Royal
-              British Private Limited.
+              &copy; 2024 ROYAL BRITISH International School. A unit of ROYAL
+              BRITISH Private Limited.
             </p>
             <p className="mt-2">www.royalbritish.com</p>
           </div>
