@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout as logoutAction } from "../features/auth/authSlice";
+import { FaCertificate } from "react-icons/fa";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -31,6 +32,12 @@ const Navbar = () => {
             <>
               <Link to="/profile" className="hover:underline">
                 {user.name || "Profile"}
+              </Link>
+              <Link
+                to="/certificates"
+                className="hover:underline inline-flex items-center gap-1"
+              >
+                <FaCertificate /> Certificates
               </Link>
               <button
                 onClick={handleLogout}

@@ -10,6 +10,7 @@ import Apply from "./pages/Apply";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Profile from "./pages/Profile";
+import Certificates from "./pages/Certificates";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -28,6 +29,7 @@ function App() {
         {/* 🔐 Protected */}
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/certificates" element={<Certificates />} />
         </Route>
       </Routes>
 

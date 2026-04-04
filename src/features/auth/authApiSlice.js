@@ -70,6 +70,14 @@ export const authApiSlice = rootApiSlice.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    verifyCertificate: builder.mutation({
+      query: (verificationToken) => ({
+        url: "/api/admin/certificates/verify",
+        method: "POST",
+        body: { verificationToken },
+      }),
+      invalidatesTags: ["Certificates"],
+    }),
   }),
 });
 
@@ -82,6 +90,7 @@ export const {
   useUploadProfileImageMutation,
   useUploadCertificateMutation,
   useDeleteFileMutation,
+  useVerifyCertificateMutation,
 } = authApiSlice;
 
 // Helper to build file URLs
